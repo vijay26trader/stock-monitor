@@ -1,14 +1,16 @@
 {
-  "updated": null,
+  "updated": "2026-05-23 09:05:28 ET",
   "window_active": false,
   "window_config": {
-    "start": "10:00 ET",
-    "end": "11:00 ET",
-    "threshold_pct": 20.0,
-    "momentum_window_mins": 10
+    "start": "04:00 ET",
+    "end": "05:00 ET",
+    "momentum_threshold": 20.0,
+    "reversal_threshold": 2.0
   },
   "baselines": {},
   "matches": [],
   "scans": [],
-  "last_scan_date": null
+  "last_scan_date": "2026-05-23",
+  "tracker": {},
+  "reversals": []
 }
