@@ -41,7 +41,7 @@ MOMENTUM_THRESHOLD_PCT = 20.0   # e.g. 20%
 REVERSAL_THRESHOLD_PCT = 2.0    # e.g. 2% drop from peak
 
 # Output (committed to repo, read by GitHub Pages)
-OUTPUT_FILE = "data/stocks.json"
+OUTPUT_FILE = "docs/data/stocks.json"
 
 # ════════════════════════════════════════════════════════════════
 # TIMEZONE
@@ -101,7 +101,7 @@ def load():
     return dict(EMPTY_STATE)
 
 def save(data):
-    os.makedirs("data", exist_ok=True)
+    os.makedirs("docs/data", exist_ok=True)
     with open(OUTPUT_FILE, "w") as f:
         json.dump(data, f, indent=2)
 
