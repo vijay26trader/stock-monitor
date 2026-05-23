@@ -1,0 +1,14 @@
+{
+  "updated": null,
+  "window_active": false,
+  "window_config": {
+    "start": "10:00 ET",
+    "end": "11:00 ET",
+    "threshold_pct": 20.0,
+    "momentum_window_mins": 10
+  },
+  "baselines": {},
+  "matches": [],
+  "scans": [],
+  "last_scan_date": null
+}

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Momentum Reversal Monitor</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080c10;--surface:#0d1117;--surface2:#161b22;--surface3:#21262d;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e6edf3;--muted:#7d8590;--muted2:#3d444d;
+  --green:#3fb950;--green-dim:rgba(63,185,80,0.1);
+  --red:#f85149;--red-dim:rgba(248,81,73,0.1);
+  --amber:#e3b341;--amber-dim:rgba(227,179,65,0.1);
+  --blue:#58a6ff;--blue-dim:rgba(88,166,255,0.1);
+  --purple:#bc8cff;--purple-dim:rgba(188,140,255,0.1);
+}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:2rem 1.5rem 5rem}
+
+/* header */
+header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-icon{width:44px;height:44px;border-radius:12px;background:var(--purple-dim);border:1px solid rgba(188,140,255,0.4);display:flex;align-items:center;justify-content:center;font-size:22px}
+h1{font-size:1.4rem;font-weight:800;letter-spacing:-0.02em}
+h1 em{font-style:normal;color:var(--purple)}
+.tagline{font-size:0.72rem;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace}
+.pill{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:100px;font-size:0.72rem;font-family:'JetBrains Mono',monospace;border:1px solid var(--border2);background:var(--surface2)}
+.dot{width:7px;height:7px;border-radius:50%}
+.dot.on{background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 1.5s infinite}
+.dot.off{background:var(--muted2)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+
+/* stat cards */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:2rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.9rem 1.1rem}
+.stat-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;font-family:'JetBrains Mono',monospace;margin-bottom:5px}
+.stat-val{font-size:1.55rem;font-weight:800;line-height:1}
+.c-green{color:var(--green)}.c-red{color:var(--red)}.c-amber{color:var(--amber)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}
+
+/* section */
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:1rem;margin-top:2rem}
+.sh-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.sh-line{flex:1;height:1px;background:var(--border)}
+
+/* reversal cards */
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.rev-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;position:relative}
+.rev-card-top{padding:1.1rem 1.3rem 0.8rem;border-bottom:1px solid var(--border)}
+.rev-symbol{font-size:1.5rem;font-weight:800;letter-spacing:-.02em}
+.rev-badge{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-family:'JetBrains Mono',monospace;padding:3px 10px;border-radius:100px;border:1px solid rgba(248,81,73,.3);background:var(--red-dim);color:var(--red);font-weight:600}
+
+/* timeline inside reversal card */
+.timeline{padding:1rem 1.3rem 1.2rem;display:flex;flex-direction:column;gap:0}
+.tl-row{display:flex;align-items:flex-start;gap:10px;position:relative}
+.tl-row:not(:last-child)::after{content:'';position:absolute;left:9px;top:22px;width:1px;height:calc(100% + 2px);background:var(--border2)}
+.tl-dot{width:19px;height:19px;border-radius:50%;border:2px solid;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:9px}
+.tl-dot.baseline{border-color:var(--blue);background:var(--blue-dim)}
+.tl-dot.peak{border-color:var(--green);background:var(--green-dim)}
+.tl-dot.reversal{border-color:var(--red);background:var(--red-dim)}
+.tl-content{flex:1;padding-bottom:14px}
+.tl-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-family:'JetBrains Mono',monospace}
+.tl-price{font-size:1.15rem;font-weight:800;line-height:1.1;margin:2px 0}
+.tl-meta{font-size:.7rem;font-family:'JetBrains Mono',monospace;color:var(--muted)}
+.tl-badge{display:inline-block;font-size:.65rem;padding:2px 8px;border-radius:100px;margin-left:6px;font-family:'JetBrains Mono',monospace;font-weight:600}
+.tl-badge.up{background:var(--green-dim);color:var(--green);border:1px solid rgba(63,185,80,.25)}
+.tl-badge.dn{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,81,73,.25)}
+
+/* config strip */
+.cfg{display:flex;flex-wrap:wrap;gap:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.3rem;margin-bottom:.5rem}
+.cfg-item .key{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-family:'JetBrains Mono',monospace;margin-bottom:3px}
+.cfg-item .val{font-size:.85rem;font-weight:600;font-family:'JetBrains Mono',monospace}
+
+/* scan table */
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:.78rem;font-family:'JetBrains Mono',monospace}
+thead th{background:var(--surface2);padding:9px 14px;text-align:left;color:var(--muted);font-weight:500;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+tbody td{padding:9px 14px;color:var(--text)}
+td.sym{font-weight:700;color:var(--blue)}
+.status-tag{display:inline-block;padding:2px 9px;border-radius:100px;font-size:.62rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.s-watching{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(88,166,255,.2)}
+.s-momentum{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(227,179,65,.2)}
+.s-reversed{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,81,73,.2)}
+.s-skipped{background:var(--surface3);color:var(--muted);border:1px solid var(--border)}
+
+/* progress bar */
+.bar-wrap{display:flex;align-items:center;gap:8px}
+.bar-track{flex:1;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.bar-fill{height:100%;border-radius:2px;transition:width .4s}
+
+/* empty */
+.empty{text-align:center;padding:3rem 2rem;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.empty-icon{font-size:2.2rem;opacity:.35;margin-bottom:.8rem}
+.empty-title{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.empty-desc{font-size:.75rem;color:var(--muted);line-height:1.6}
+
+/* loader */
+#loader{display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:1rem}
+.spinner{width:30px;height:30px;border:2px solid var(--border2);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+footer{margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+footer p{font-size:.68rem;color:var(--muted2);font-family:'JetBrains Mono',monospace}
+#app{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="loader">
+  <div class="spinner"></div>
+  <p style="font-size:.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace">loading scan data…</p>
+</div>
+
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div>
+        <h1>Momentum <em>Reversal</em> Monitor</h1>
+        <div class="tagline" id="tagline">—</div>
+      </div>
+    </div>
+    <div class="pill"><div class="dot" id="dot"></div><span id="status-txt">—</span></div>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-lbl">Reversals Found</div><div class="stat-val c-red" id="s-rev">0</div></div>
+    <div class="stat"><div class="stat-lbl">In Momentum</div><div class="stat-val c-amber" id="s-mom">0</div></div>
+    <div class="stat"><div class="stat-lbl">Watching</div><div class="stat-val c-blue" id="s-watch">0</div></div>
+    <div class="stat"><div class="stat-lbl">Momentum %</div><div class="stat-val c-green" id="s-mpct">—</div></div>
+    <div class="stat"><div class="stat-lbl">Reversal %</div><div class="stat-val c-purple" id="s-rpct">—</div></div>
+  </div>
+
+  <div class="sh"><div class="sh-lbl">Configuration</div><div class="sh-line"></div></div>
+  <div class="cfg">
+    <div class="cfg-item"><div class="key">Window</div><div class="val" id="cfg-win">—</div></div>
+    <div class="cfg-item"><div class="key">Momentum threshold</div><div class="val" id="cfg-mom">—</div></div>
+    <div class="cfg-item"><div class="key">Reversal threshold</div><div class="val" id="cfg-rev">—</div></div>
+    <div class="cfg-item"><div class="key">Scans this session</div><div class="val" id="cfg-scans">—</div></div>
+  </div>
+
+  <div class="sh"><div class="sh-lbl">Reversal Signals</div><div class="sh-line"></div></div>
+  <div id="rev-container"></div>
+
+  <div class="sh"><div class="sh-lbl">Live Tracker</div><div class="sh-line"></div></div>
+  <div id="tbl-container"></div>
+
+  <footer>
+    <p id="footer-ts">—</p>
+    <p>Auto-refreshes every 60 s · Data via Yahoo Finance · Times in ET</p>
+  </footer>
+</div>
+
+</div>
+<script>
+const DATA = '../data/stocks.json';
+
+function p(v,d=2){return v!=null?parseFloat(v).toFixed(d):'—'}
+function $p(v){return v!=null?'$'+parseFloat(v).toFixed(2):'—'}
+function pct(v,plus=true){if(v==null)return'—';const s=parseFloat(v).toFixed(2);return (plus&&v>0?'+':'')+s+'%'}
+
+function statusTag(s){
+  const map={
+    WATCHING:['s-watching','watching'],
+    MOMENTUM:['s-momentum','momentum ▲'],
+    REVERSED:['s-reversed','reversed ▼'],
+    SKIPPED: ['s-skipped','skipped'],
+  };
+  const [cls,lbl]=map[s]||['s-skipped',s];
+  return `<span class="status-tag ${cls}">${lbl}</span>`;
+}
+
+function renderReversals(revs){
+  const el=document.getElementById('rev-container');
+  if(!revs||!revs.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📡</div><div class="empty-title">No reversals yet</div><div class="empty-desc">Waiting for a stock to rise 20%+ then pull back.<br>Confirmed reversals will appear here with full timeline.</div></div>`;
+    return;
+  }
+  let html='<div class="rev-grid">';
+  revs.forEach(r=>{
+    const momPct=r.momentum_pct!=null?'+'+parseFloat(r.momentum_pct).toFixed(2)+'%':'';
+    const revPct=r.reversal_pct!=null?'-'+parseFloat(r.reversal_pct).toFixed(2)+'%':'';
+    html+=`
+    <div class="rev-card">
+      <div class="rev-card-top" style="display:flex;justify-content:space-between;align-items:center">
+        <div class="rev-symbol">${r.symbol}</div>
+        <div class="rev-badge">▼ reversal confirmed</div>
+      </div>
+      <div class="timeline">
+        <div class="tl-row">
+          <div class="tl-dot baseline"></div>
+          <div class="tl-content">
+            <div class="tl-label">Baseline (window open)</div>
+            <div class="tl-price">${$p(r.baseline_price)}</div>
+            <div class="tl-meta">${r.baseline_time||'—'}</div>
+          </div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-dot peak"></div>
+          <div class="tl-content">
+            <div class="tl-label">Peak <span class="tl-badge up">${momPct}</span></div>
+            <div class="tl-price c-green">${$p(r.peak_price)}</div>
+            <div class="tl-meta">${r.peak_time||'—'}</div>
+          </div>
+        </div>
+        <div class="tl-row">
+          <div class="tl-dot reversal"></div>
+          <div class="tl-content">
+            <div class="tl-label">First reversal <span class="tl-badge dn">${revPct} from peak</span></div>
+            <div class="tl-price c-red">${$p(r.reversal_price)}</div>
+            <div class="tl-meta">${r.reversal_time||'—'}</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function renderTable(scans,tracker){
+  const el=document.getElementById('tbl-container');
+  const latest=scans&&scans.length?scans[scans.length-1]:null;
+  if(!latest||!latest.results||!latest.results.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🕐</div><div class="empty-title">No scan data yet</div><div class="empty-desc">Data appears once the window opens and first scan runs.</div></div>`;
+    return;
+  }
+
+  const rows=[...latest.results].sort((a,b)=>{
+    const order={REVERSED:0,MOMENTUM:1,WATCHING:2,SKIPPED:3};
+    return (order[a.status]??9)-(order[b.status]??9);
+  });
+
+  let html=`<div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>Symbol</th><th>Status</th><th>Price</th>
+      <th>Baseline</th><th>Peak</th><th>Momentum</th><th>Pullback from peak</th>
+    </tr></thead><tbody>`;
+
+  rows.forEach(r=>{
+    const momPct=r.momentum_pct!=null?parseFloat(r.momentum_pct):0;
+    const revPct=r.reversal_pct!=null?parseFloat(r.reversal_pct):0;
+    const barW=Math.min(momPct/40*100,100).toFixed(1);
+    const revW=Math.min(revPct/10*100,100).toFixed(1);
+
+    html+=`<tr>
+      <td class="sym">${r.symbol}</td>
+      <td>${statusTag(r.status)}</td>
+      <td>${$p(r.price)}</td>
+      <td style="color:var(--blue)">${$p(r.baseline)}</td>
+      <td style="color:var(--green)">${r.peak!=null?$p(r.peak):'—'}</td>
+      <td>
+        ${r.momentum_pct!=null?`
+        <div class="bar-wrap">
+          <div class="bar-track"><div class="bar-fill" style="width:${barW}%;background:var(--green)"></div></div>
+          <span style="font-size:.65rem;color:var(--green);min-width:44px">+${p(r.momentum_pct)}%</span>
+        </div>`:'<span style="color:var(--muted)">—</span>'}
+      </td>
+      <td>
+        ${r.reversal_pct!=null?`
+        <div class="bar-wrap">
+          <div class="bar-track"><div class="bar-fill" style="width:${revW}%;background:var(--red)"></div></div>
+          <span style="font-size:.65rem;color:var(--red);min-width:44px">-${p(r.reversal_pct)}%</span>
+        </div>`:'<span style="color:var(--muted)">—</span>'}
+      </td>
+    </tr>`;
+  });
+
+  html+=`</tbody></table></div>`;
+  if(latest.time) html+=`<p style="font-size:.65rem;color:var(--muted2);font-family:'JetBrains Mono',monospace;margin-top:6px;text-align:right">Scan @ ${latest.time} ET · ${latest.elapsed_mins} min into window</p>`;
+  el.innerHTML=html;
+}
+
+async function load(){
+  try{
+    const res=await fetch(DATA+'?t='+Date.now());
+    const data=await res.json();
+
+    document.getElementById('loader').style.display='none';
+    document.getElementById('app').style.display='block';
+
+    // status pill
+    const dot=document.getElementById('dot');
+    document.getElementById('status-txt').textContent=data.window_active?'window active':'window closed';
+    dot.className='dot '+(data.window_active?'on':'off');
+
+    document.getElementById('tagline').textContent=data.updated?'Last scan: '+data.updated:'No scans yet';
+    document.getElementById('footer-ts').textContent=data.updated||'—';
+
+    // counts
+    const tracker=data.tracker||{};
+    const statuses=Object.values(tracker).map(e=>e.status||'WATCHING');
+    document.getElementById('s-rev').textContent=(data.reversals||[]).length;
+    document.getElementById('s-mom').textContent=statuses.filter(s=>s==='MOMENTUM').length;
+    document.getElementById('s-watch').textContent=statuses.filter(s=>s==='WATCHING').length;
+
+    const cfg=data.window_config||{};
+    document.getElementById('s-mpct').textContent=cfg.momentum_threshold!=null?cfg.momentum_threshold+'%':'—';
+    document.getElementById('s-rpct').textContent=cfg.reversal_threshold!=null?cfg.reversal_threshold+'%':'—';
+
+    document.getElementById('cfg-win').textContent=cfg.start&&cfg.end?cfg.start+' → '+cfg.end:'—';
+    document.getElementById('cfg-mom').textContent=cfg.momentum_threshold!=null?'+'+cfg.momentum_threshold+'% upward':'—';
+    document.getElementById('cfg-rev').textContent=cfg.reversal_threshold!=null?'-'+cfg.reversal_threshold+'% from peak':'—';
+    document.getElementById('cfg-scans').textContent=(data.scans||[]).length;
+
+    renderReversals(data.reversals);
+    renderTable(data.scans,tracker);
+  }catch(err){
+    document.getElementById('loader').innerHTML=`<div style="text-align:center;color:var(--red);font-family:'JetBrains Mono',monospace;font-size:.78rem"><p>Failed to load data</p><p style="color:var(--muted);margin-top:.5rem">${err.message}</p></div>`;
+  }
+}
+
+load();
+setInterval(load,60000);
+</script>
+</body>
+</html>
