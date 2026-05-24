@@ -111,11 +111,24 @@ def fetch_candles(symbol):
             interval="1m",
         )
         if hist.empty:
+            print(f"  [{symbol}] DEBUG: yfinance returned empty — ticker invalid or data unavailable")
             return {}
 
-        hist.index = hist.index.tz_convert(ET_TZ)
-        by_day = {}
+        # DEBUG: show raw timestamps before conversion
+        print(f"  [{symbol}] DEBUG: {len(hist)} total candles fetched")
+        print(f"  [{symbol}] DEBUG: raw tz        = {hist.index.tzinfo}")
+        print(f"  [{symbol}] DEBUG: first raw ts  = {hist.index[0]}")
+        print(f"  [{symbol}] DEBUG: last  raw ts  = {hist.index[-1]}")
 
+        hist.index = hist.index.tz_convert(ET_TZ)
+
+        print(f"  [{symbol}] DEBUG: first ET ts   = {hist.index[0]}")
+        print(f"  [{symbol}] DEBUG: last  ET ts   = {hist.index[-1]}")
+        unique_hours = sorted(set(ts.hour for ts in hist.index))
+        print(f"  [{symbol}] DEBUG: ET hours present = {unique_hours}")
+        print(f"  [{symbol}] DEBUG: window = {WINDOW_START_HOUR:02d}:{WINDOW_START_MINUTE:02d}-{WINDOW_END_HOUR:02d}:{WINDOW_END_MINUTE:02d} ET")
+
+        by_day = {}
         for ts, row in hist.iterrows():
             h, m = ts.hour, ts.minute
             mins = h * 60 + m
@@ -133,6 +146,9 @@ def fetch_candles(symbol):
                 "close":  round(float(row["Close"]), 4),
                 "volume": int(row["Volume"]),
             })
+
+        kept = sum(len(v) for v in by_day.values())
+        print(f"  [{symbol}] DEBUG: candles after window filter = {kept}")
         return by_day
 
     except Exception as e:
