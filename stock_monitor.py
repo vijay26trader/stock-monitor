@@ -20,6 +20,7 @@ Example:
 import yfinance as yf
 import json
 import os
+import pytz
 from datetime import datetime, timezone, timedelta
 
 # ════════════════════════════════════════════════════════════════
@@ -47,10 +48,10 @@ OUTPUT_FILE = "docs/data/stocks.json"
 # TIMEZONE
 # ════════════════════════════════════════════════════════════════
 
-ET_OFFSET = timezone(timedelta(hours=-4))   # EDT (UTC-4); use -5 for EST winter
+ET_TZ = pytz.timezone("America/New_York")  # auto-handles EDT/EST
 
 def now_et():
-    return datetime.now(ET_OFFSET)
+    return datetime.now(ET_TZ)
 
 def fmt(dt_or_str):
     if isinstance(dt_or_str, str):
@@ -110,20 +111,30 @@ def save(data):
 # ════════════════════════════════════════════════════════════════
 
 def get_candles(symbol):
-    """Return last 90 minutes of 1-min OHLCV candles as list of dicts."""
+    """Return today's 1-min OHLCV candles within the window, timestamps in ET."""
     try:
         t = yf.Ticker(symbol)
         hist = t.history(period="1d", interval="1m")
         if hist.empty:
             return []
+
+        # Convert all timestamps to ET (handles EDT/EST automatically)
+        hist.index = hist.index.tz_convert(ET_TZ)
+
         rows = []
         for ts, row in hist.iterrows():
+            # Only keep candles inside the configured window
+            mins = ts.hour * 60 + ts.minute
+            win_start = WINDOW_START_HOUR * 60 + WINDOW_START_MINUTE
+            win_end   = WINDOW_END_HOUR   * 60 + WINDOW_END_MINUTE
+            if not (win_start <= mins <= win_end):
+                continue
             rows.append({
-                "time": ts.strftime("%H:%M"),
-                "open":  round(float(row["Open"]),  4),
-                "high":  round(float(row["High"]),  4),
-                "low":   round(float(row["Low"]),   4),
-                "close": round(float(row["Close"]), 4),
+                "time":   ts.strftime("%H:%M"),
+                "open":   round(float(row["Open"]),  4),
+                "high":   round(float(row["High"]),  4),
+                "low":    round(float(row["Low"]),   4),
+                "close":  round(float(row["Close"]), 4),
                 "volume": int(row["Volume"]),
             })
         return rows

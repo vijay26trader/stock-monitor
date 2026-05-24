@@ -18,6 +18,7 @@ GitHub Actions inputs (all passed as env vars):
 import yfinance as yf
 import json
 import os
+import pytz
 from datetime import datetime, timedelta, timezone
 
 # ════════════════════════════════════════════════════════════════
@@ -90,7 +91,7 @@ print("=" * 60)
 # TIMEZONE
 # ════════════════════════════════════════════════════════════════
 
-ET_OFFSET = timezone(timedelta(hours=-4))   # EDT (UTC-4); change to -5 for EST winter
+ET_TZ = pytz.timezone("America/New_York")  # auto-handles EDT/EST
 
 # ════════════════════════════════════════════════════════════════
 # FETCH 1-MIN CANDLES
@@ -112,7 +113,7 @@ def fetch_candles(symbol):
         if hist.empty:
             return {}
 
-        hist.index = hist.index.tz_convert(ET_OFFSET)
+        hist.index = hist.index.tz_convert(ET_TZ)
         by_day = {}
 
         for ts, row in hist.iterrows():
