@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backtest Results — Momentum Reversal</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080c10;--surface:#0d1117;--surface2:#161b22;--surface3:#21262d;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e6edf3;--muted:#7d8590;--muted2:#3d444d;
+  --green:#3fb950;--green-dim:rgba(63,185,80,0.1);
+  --red:#f85149;--red-dim:rgba(248,81,73,0.1);
+  --amber:#e3b341;--amber-dim:rgba(227,179,65,0.1);
+  --blue:#58a6ff;--blue-dim:rgba(88,166,255,0.1);
+  --purple:#bc8cff;--purple-dim:rgba(188,140,255,0.1);
+}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);pointer-events:none;z-index:0}
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:2rem 1.5rem 5rem}
+
+header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-icon{width:44px;height:44px;border-radius:12px;background:var(--amber-dim);border:1px solid rgba(227,179,65,0.4);display:flex;align-items:center;justify-content:center;font-size:22px}
+h1{font-size:1.4rem;font-weight:800;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--amber)}
+.tagline{font-size:.72rem;color:var(--muted);margin-top:3px;font-family:'JetBrains Mono',monospace}
+.nav-link{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);font-size:.75rem;font-family:'JetBrains Mono',monospace;color:var(--text);text-decoration:none;transition:border-color .2s}
+.nav-link:hover{border-color:var(--border);color:var(--blue)}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:2rem}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.9rem 1.1rem}
+.stat-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;font-family:'JetBrains Mono',monospace;margin-bottom:5px}
+.stat-val{font-size:1.55rem;font-weight:800;line-height:1}
+.c-green{color:var(--green)}.c-red{color:var(--red)}.c-amber{color:var(--amber)}.c-blue{color:var(--blue)}.c-purple{color:var(--purple)}
+
+/* section */
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:1rem;margin-top:2rem}
+.sh-lbl{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.sh-line{flex:1;height:1px;background:var(--border)}
+
+/* config strip */
+.cfg{display:flex;flex-wrap:wrap;gap:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem 1.3rem;margin-bottom:.5rem}
+.cfg-item .key{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-family:'JetBrains Mono',monospace;margin-bottom:3px}
+.cfg-item .val{font-size:.85rem;font-weight:600;font-family:'JetBrains Mono',monospace}
+
+/* symbol summary cards */
+.sym-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:.5rem}
+.sym-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:.9rem 1.1rem}
+.sym-name{font-size:1.1rem;font-weight:800;color:var(--blue);margin-bottom:.4rem}
+.sym-row{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-bottom:2px}
+.sym-row span{color:var(--text);font-weight:600}
+.hit-rate{font-size:.65rem;margin-top:.5rem;padding:3px 8px;border-radius:100px;background:var(--surface3);color:var(--muted);font-family:'JetBrains Mono',monospace;display:inline-block}
+
+/* results table */
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:auto}
+table{width:100%;border-collapse:collapse;font-size:.78rem;font-family:'JetBrains Mono',monospace;min-width:860px}
+thead th{background:var(--surface2);padding:9px 14px;text-align:left;color:var(--muted);font-weight:500;font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface2)}
+tbody td{padding:9px 14px;white-space:nowrap}
+td.sym{font-weight:700;color:var(--blue)}
+td.date{color:var(--muted)}
+.tag{display:inline-block;padding:2px 9px;border-radius:100px;font-size:.62rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.tag-rev{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,81,73,.2)}
+.tag-mom{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(227,179,65,.2)}
+
+/* arrow flow */
+.flow{display:inline-flex;align-items:center;gap:4px;font-size:.72rem}
+.flow-arrow{color:var(--muted2)}
+
+/* filter bar */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem;align-items:center}
+.filter-btn{padding:5px 14px;border-radius:100px;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);font-size:.72rem;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all .15s}
+.filter-btn:hover,.filter-btn.active{background:var(--blue-dim);border-color:rgba(88,166,255,.3);color:var(--blue)}
+.filter-lbl{font-size:.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace}
+
+/* empty */
+.empty{text-align:center;padding:3rem 2rem;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.empty-icon{font-size:2.2rem;opacity:.35;margin-bottom:.8rem}
+.empty-title{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.empty-desc{font-size:.75rem;color:var(--muted);line-height:1.6}
+
+/* loader */
+#loader{display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:1rem}
+.spinner{width:30px;height:30px;border:2px solid var(--border2);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+footer{margin-top:3rem;padding-top:1.2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+footer p{font-size:.68rem;color:var(--muted2);font-family:'JetBrains Mono',monospace}
+#app{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="loader">
+  <div class="spinner"></div>
+  <p style="font-size:.78rem;color:var(--muted);font-family:'JetBrains Mono',monospace">loading backtest results…</p>
+</div>
+
+<div id="app">
+  <header>
+    <div class="brand">
+      <div class="brand-icon">📈</div>
+      <div>
+        <h1>Momentum Reversal <em>Backtest</em></h1>
+        <div class="tagline" id="tagline">—</div>
+      </div>
+    </div>
+    <a class="nav-link" href="./index.html">← Live Monitor</a>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-lbl">Days Scanned</div><div class="stat-val c-blue" id="s-days">—</div></div>
+    <div class="stat"><div class="stat-lbl">Reversals Found</div><div class="stat-val c-red" id="s-rev">—</div></div>
+    <div class="stat"><div class="stat-lbl">Momentum Only</div><div class="stat-val c-amber" id="s-mom">—</div></div>
+    <div class="stat"><div class="stat-lbl">Stocks Watched</div><div class="stat-val c-purple" id="s-stocks">—</div></div>
+    <div class="stat"><div class="stat-lbl">Hit Rate</div><div class="stat-val c-green" id="s-rate">—</div></div>
+  </div>
+
+  <!-- Config -->
+  <div class="sh"><div class="sh-lbl">Backtest Configuration</div><div class="sh-line"></div></div>
+  <div class="cfg">
+    <div class="cfg-item"><div class="key">Date Range</div><div class="val" id="cfg-range">—</div></div>
+    <div class="cfg-item"><div class="key">Window</div><div class="val" id="cfg-win">—</div></div>
+    <div class="cfg-item"><div class="key">Momentum threshold</div><div class="val" id="cfg-mom">—</div></div>
+    <div class="cfg-item"><div class="key">Reversal threshold</div><div class="val" id="cfg-rev">—</div></div>
+    <div class="cfg-item"><div class="key">Generated</div><div class="val" id="cfg-gen">—</div></div>
+  </div>
+
+  <!-- Per symbol -->
+  <div class="sh"><div class="sh-lbl">By Symbol</div><div class="sh-line"></div></div>
+  <div class="sym-grid" id="sym-grid"></div>
+
+  <!-- Results table -->
+  <div class="sh"><div class="sh-lbl">All Signals</div><div class="sh-line"></div></div>
+
+  <div class="filters">
+    <span class="filter-lbl">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('REVERSED',this)">Reversals only</button>
+    <button class="filter-btn" onclick="setFilter('MOMENTUM',this)">Momentum only</button>
+  </div>
+
+  <div id="tbl-container"></div>
+
+  <footer>
+    <p id="footer-ts">—</p>
+    <p>1-min data via Yahoo Finance · max 30 days back · Times in ET</p>
+  </footer>
+</div>
+
+</div>
+<script>
+const DATA = './data/backtest.json';
+let allResults = [];
+let activeFilter = 'all';
+
+function $p(v){return v!=null?'$'+parseFloat(v).toFixed(2):'—'}
+function p(v,d=2){return v!=null?parseFloat(v).toFixed(d):'—'}
+
+function setFilter(f, btn){
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function renderSymGrid(bySymbol, totalDays){
+  const el = document.getElementById('sym-grid');
+  const syms = Object.entries(bySymbol).sort((a,b)=>(b[1].reversals+b[1].momentum_only)-(a[1].reversals+a[1].momentum_only));
+  if(!syms.length){ el.innerHTML=''; return; }
+  el.innerHTML = syms.map(([sym,s])=>{
+    const total = s.reversals + s.momentum_only;
+    const rate  = totalDays > 0 ? (total/totalDays*100).toFixed(0)+'%' : '—';
+    return `<div class="sym-card">
+      <div class="sym-name">${sym}</div>
+      <div class="sym-row">Reversals <span class="c-red">${s.reversals}</span></div>
+      <div class="sym-row">Momentum only <span class="c-amber">${s.momentum_only}</span></div>
+      <div class="sym-row">Active days <span>${s.days.length}</span></div>
+      <div class="hit-rate">Hit rate ${rate}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTable(){
+  const el = document.getElementById('tbl-container');
+  let rows = allResults;
+  if(activeFilter==='REVERSED') rows = rows.filter(r=>r.reversal_price!=null);
+  if(activeFilter==='MOMENTUM') rows = rows.filter(r=>r.reversal_price==null);
+
+  if(!rows.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><div class="empty-title">No signals match this filter</div><div class="empty-desc">Try changing the filter or running the backtest over a wider date range.</div></div>`;
+    return;
+  }
+
+  let html=`<div class="tbl-wrap"><table>
+    <thead><tr>
+      <th>Date</th><th>Symbol</th><th>Type</th>
+      <th>Baseline</th><th>Peak ↑</th><th>Momentum %</th><th>Peak time</th>
+      <th>Reversal ↓</th><th>Pullback %</th><th>Reversal time</th>
+    </tr></thead><tbody>`;
+
+  rows.forEach(r=>{
+    const isRev = r.reversal_price != null;
+    const momPct = r.momentum_pct!=null ? '+'+parseFloat(r.momentum_pct).toFixed(2)+'%' : '—';
+    const revPct = r.reversal_pct!=null ? '-'+parseFloat(r.reversal_pct).toFixed(2)+'%' : '—';
+    html+=`<tr>
+      <td class="date">${r.date}</td>
+      <td class="sym">${r.symbol}</td>
+      <td><span class="tag ${isRev?'tag-rev':'tag-mom'}">${isRev?'reversal':'momentum'}</span></td>
+      <td style="color:var(--blue)">${$p(r.baseline_price)}<br><span style="color:var(--muted2);font-size:.65rem">${r.baseline_time||''}</span></td>
+      <td style="color:var(--green)">${$p(r.peak_price)}</td>
+      <td style="color:var(--green);font-weight:700">${momPct}</td>
+      <td style="color:var(--muted)">${r.peak_time||'—'}</td>
+      <td style="color:${isRev?'var(--red)':'var(--muted)'}">${isRev?$p(r.reversal_price):'—'}</td>
+      <td style="color:${isRev?'var(--red)':'var(--muted)'};font-weight:700">${isRev?revPct:'—'}</td>
+      <td style="color:var(--muted)">${r.reversal_time||'—'}</td>
+    </tr>`;
+    if(r.note) html+=`<tr><td colspan="10" style="font-size:.65rem;color:var(--muted);padding:4px 14px 8px;font-family:'JetBrains Mono',monospace">ℹ️ ${r.note}</td></tr>`;
+  });
+
+  html+=`</tbody></table></div>
+    <p style="font-size:.65rem;color:var(--muted2);font-family:'JetBrains Mono',monospace;margin-top:6px;text-align:right">${rows.length} signal(s) shown</p>`;
+  el.innerHTML=html;
+}
+
+async function load(){
+  try{
+    const res  = await fetch(DATA+'?t='+Date.now());
+    const data = await res.json();
+
+    document.getElementById('loader').style.display='none';
+    document.getElementById('app').style.display='block';
+
+    const cfg = data.window_config||{};
+    const sum = data.summary||{};
+
+    document.getElementById('tagline').textContent = data.start_date && data.end_date
+      ? `${data.start_date} → ${data.end_date}`:'—';
+    document.getElementById('footer-ts').textContent = 'Generated: '+(data.generated_at||'—');
+
+    // stats
+    const totalSignals = (sum.total_reversals||0)+(sum.total_momentum||0);
+    const hitRate = sum.total_days>0
+      ? ((totalSignals / (sum.total_days*(data.watchlist||[]).length))*100).toFixed(1)+'%'
+      : '—';
+
+    document.getElementById('s-days').textContent    = sum.total_days||'—';
+    document.getElementById('s-rev').textContent     = sum.total_reversals||0;
+    document.getElementById('s-mom').textContent     = sum.total_momentum||0;
+    document.getElementById('s-stocks').textContent  = (data.watchlist||[]).length||'—';
+    document.getElementById('s-rate').textContent    = hitRate;
+
+    document.getElementById('cfg-range').textContent = data.start_date&&data.end_date?`${data.start_date} → ${data.end_date}`:'—';
+    document.getElementById('cfg-win').textContent   = cfg.start&&cfg.end?`${cfg.start} → ${cfg.end}`:'—';
+    document.getElementById('cfg-mom').textContent   = cfg.momentum_threshold!=null?'+'+cfg.momentum_threshold+'%':'—';
+    document.getElementById('cfg-rev').textContent   = cfg.reversal_threshold!=null?'-'+cfg.reversal_threshold+'%':'—';
+    document.getElementById('cfg-gen').textContent   = data.generated_at||'—';
+
+    renderSymGrid(sum.by_symbol||{}, sum.total_days||0);
+
+    allResults = data.results||[];
+    renderTable();
+
+  }catch(err){
+    document.getElementById('loader').innerHTML=`
+      <div style="text-align:center;color:var(--red);font-family:'JetBrains Mono',monospace;font-size:.78rem">
+        <p>No backtest data found.</p>
+        <p style="color:var(--muted);margin-top:.5rem">Run the <strong>Backtest — Momentum Reversal</strong> workflow in GitHub Actions first.</p>
+        <p style="color:var(--muted2);margin-top:.3rem;font-size:.65rem">${err.message}</p>
+      </div>`;
+  }
+}
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+name: Backtest — Momentum Reversal
+
+on:
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Start date (YYYY-MM-DD) — max 30 days ago'
+        required: true
+        default: '2025-05-01'
+      end_date:
+        description: 'End date (YYYY-MM-DD)'
+        required: true
+        default: '2025-05-20'
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install yfinance pandas
+
+      - name: Run backtest
+        env:
+          START_DATE: ${{ github.event.inputs.start_date }}
+          END_DATE:   ${{ github.event.inputs.end_date }}
+        run: python backtest.py
+
+      - name: Commit & push results
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/backtest.json
+          git diff --cached --quiet || git commit -m "📈 Backtest ${{ github.event.inputs.start_date }} → ${{ github.event.inputs.end_date }}"
+          git push
