@@ -6,15 +6,15 @@ on:
       start_date:
         description: 'Start date (YYYY-MM-DD) — max 30 days ago'
         required: true
-        default: '2025-05-01'
+        default: '2026-05-01'
       end_date:
         description: 'End date (YYYY-MM-DD)'
         required: true
-        default: '2025-05-20'
+        default: '2026-05-24'
       watchlist:
         description: 'Stocks to scan — comma separated (e.g. AAPL,TSLA,INTC)'
         required: false
-        default: 'AAPL,MSFT,GOOGL,TSLA,AMZN,NVDA,META,SPY,QQQ,AMD'
+        default: 'NVDA,AMD'
       momentum_threshold:
         description: 'Momentum threshold % — upward move to qualify (e.g. 20)'
         required: false
