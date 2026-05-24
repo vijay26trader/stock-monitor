@@ -11,6 +11,18 @@ on:
         description: 'End date (YYYY-MM-DD)'
         required: true
         default: '2025-05-20'
+      watchlist:
+        description: 'Stocks to scan — comma separated (e.g. AAPL,TSLA,INTC)'
+        required: false
+        default: 'AAPL,MSFT,GOOGL,TSLA,AMZN,NVDA,META,SPY,QQQ,AMD'
+      momentum_threshold:
+        description: 'Momentum threshold % — upward move to qualify (e.g. 20)'
+        required: false
+        default: '20.0'
+      reversal_threshold:
+        description: 'Reversal threshold % — pullback from peak to trigger (e.g. 2)'
+        required: false
+        default: '2.0'
 
 jobs:
   backtest:
@@ -32,8 +44,11 @@ jobs:
 
       - name: Run backtest
         env:
-          START_DATE: ${{ github.event.inputs.start_date }}
-          END_DATE:   ${{ github.event.inputs.end_date }}
+          START_DATE:          ${{ github.event.inputs.start_date }}
+          END_DATE:            ${{ github.event.inputs.end_date }}
+          WATCHLIST:           ${{ github.event.inputs.watchlist }}
+          MOMENTUM_THRESHOLD:  ${{ github.event.inputs.momentum_threshold }}
+          REVERSAL_THRESHOLD:  ${{ github.event.inputs.reversal_threshold }}
         run: python backtest.py
 
       - name: Commit & push results
@@ -41,5 +56,5 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/data/backtest.json
-          git diff --cached --quiet || git commit -m "📈 Backtest ${{ github.event.inputs.start_date }} → ${{ github.event.inputs.end_date }}"
+          git diff --cached --quiet || git commit -m "📈 Backtest ${{ github.event.inputs.start_date }} → ${{ github.event.inputs.end_date }} | ${{ github.event.inputs.watchlist }}"
           git push

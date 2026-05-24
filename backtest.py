@@ -7,78 +7,103 @@ for each day in the date range, within the configured time window.
 
 Results written to docs/data/backtest.json for the dashboard.
 
-Usage (via GitHub Actions inputs):
-  START_DATE  e.g. 2025-05-01
-  END_DATE    e.g. 2025-05-20
+GitHub Actions inputs (all passed as env vars):
+  START_DATE          e.g. 2025-05-01
+  END_DATE            e.g. 2025-05-20
+  WATCHLIST           e.g. AAPL,TSLA,INTC
+  MOMENTUM_THRESHOLD  e.g. 20.0
+  REVERSAL_THRESHOLD  e.g. 2.0
 """
 
 import yfinance as yf
 import json
 import os
-import sys
 from datetime import datetime, timedelta, timezone
 
 # ════════════════════════════════════════════════════════════════
-# CONFIG — keep in sync with stock_monitor.py
+# FIXED WINDOW SETTINGS  (edit here if needed)
 # ════════════════════════════════════════════════════════════════
-
-WATCHLIST = ["AAPL", "MSFT", "GOOGL", "TSLA", "AMZN", "NVDA", "META", "SPY", "QQQ", "AMD"]
 
 WINDOW_START_HOUR   = 4
 WINDOW_START_MINUTE = 0
 WINDOW_END_HOUR     = 5
 WINDOW_END_MINUTE   = 0
 
-MOMENTUM_THRESHOLD_PCT = 20.0
-REVERSAL_THRESHOLD_PCT = 2.0
-
 OUTPUT_FILE = "docs/data/backtest.json"
 
 # ════════════════════════════════════════════════════════════════
-# DATE RANGE  (from env or defaults)
+# HELPERS
 # ════════════════════════════════════════════════════════════════
 
 def parse_date(s):
     return datetime.strptime(s.strip(), "%Y-%m-%d").date()
 
-START_DATE_STR = os.environ.get("START_DATE", "")
-END_DATE_STR   = os.environ.get("END_DATE",   "")
+def parse_watchlist(s):
+    """Comma-separated tickers → clean uppercase list."""
+    return [t.strip().upper() for t in s.split(",") if t.strip()]
+
+def parse_float(s, default):
+    try:
+        return float(s.strip())
+    except Exception:
+        print(f"  Could not parse '{s}' as a number — using default {default}")
+        return default
+
+# ════════════════════════════════════════════════════════════════
+# READ ALL INPUTS FROM ENV  (set by GitHub Actions workflow)
+# ════════════════════════════════════════════════════════════════
 
 today = datetime.utcnow().date()
 
-if START_DATE_STR:
-    START_DATE = parse_date(START_DATE_STR)
-else:
-    START_DATE = today - timedelta(days=7)
+_start    = os.environ.get("START_DATE",         "")
+_end      = os.environ.get("END_DATE",           "")
+_watch    = os.environ.get("WATCHLIST",          "")
+_momentum = os.environ.get("MOMENTUM_THRESHOLD", "")
+_reversal = os.environ.get("REVERSAL_THRESHOLD", "")
 
-if END_DATE_STR:
-    END_DATE = parse_date(END_DATE_STR)
-else:
-    END_DATE = today - timedelta(days=1)
+START_DATE = parse_date(_start) if _start else today - timedelta(days=7)
+END_DATE   = parse_date(_end)   if _end   else today - timedelta(days=1)
 
-# yfinance 1-min data is only available for the last 30 days
+WATCHLIST = (
+    parse_watchlist(_watch) if _watch
+    else ["AAPL", "MSFT", "GOOGL", "TSLA", "AMZN", "NVDA", "META", "SPY", "QQQ", "AMD"]
+)
+
+MOMENTUM_THRESHOLD_PCT = parse_float(_momentum, 20.0) if _momentum else 20.0
+REVERSAL_THRESHOLD_PCT = parse_float(_reversal,  2.0) if _reversal else  2.0
+
+# yfinance caps 1-min history at 30 days
 EARLIEST = today - timedelta(days=29)
 if START_DATE < EARLIEST:
-    print(f"⚠️  yfinance only provides 1-min data for the last 30 days. Clamping start to {EARLIEST}.")
+    print(f"  yfinance only provides 1-min data for the last 30 days. Clamping start to {EARLIEST}.")
     START_DATE = EARLIEST
 
-print(f"Backtesting {START_DATE} → {END_DATE}  |  window {WINDOW_START_HOUR:02d}:{WINDOW_START_MINUTE:02d}–{WINDOW_END_HOUR:02d}:{WINDOW_END_MINUTE:02d} ET")
-print(f"Stocks: {WATCHLIST}\n")
+print("=" * 60)
+print(f"  Backtest  : {START_DATE} → {END_DATE}")
+print(f"  Window    : {WINDOW_START_HOUR:02d}:{WINDOW_START_MINUTE:02d} – {WINDOW_END_HOUR:02d}:{WINDOW_END_MINUTE:02d} ET")
+print(f"  Stocks    : {', '.join(WATCHLIST)}")
+print(f"  Momentum  : >= +{MOMENTUM_THRESHOLD_PCT}%")
+print(f"  Reversal  : >= -{REVERSAL_THRESHOLD_PCT}% from peak")
+print("=" * 60)
 
 # ════════════════════════════════════════════════════════════════
-# FETCH 1-MIN CANDLES FOR A SYMBOL OVER THE DATE RANGE
+# TIMEZONE
 # ════════════════════════════════════════════════════════════════
 
-ET_OFFSET = timezone(timedelta(hours=-4))   # EDT; change to -5 for EST
+ET_OFFSET = timezone(timedelta(hours=-4))   # EDT (UTC-4); change to -5 for EST winter
+
+# ════════════════════════════════════════════════════════════════
+# FETCH 1-MIN CANDLES
+# ════════════════════════════════════════════════════════════════
 
 def fetch_candles(symbol):
     """
-    Returns dict: { 'YYYY-MM-DD': [ {time, open, high, low, close, volume}, ... ] }
-    Only candles within the configured window are included.
+    Returns dict keyed by date string:
+      { 'YYYY-MM-DD': [ {time, open, high, low, close, volume}, ... ] }
+    Only candles within the configured time window are included.
     """
     try:
         t = yf.Ticker(symbol)
-        # fetch max available 1-min history
         hist = t.history(
             start=START_DATE.strftime("%Y-%m-%d"),
             end=(END_DATE + timedelta(days=1)).strftime("%Y-%m-%d"),
@@ -87,22 +112,19 @@ def fetch_candles(symbol):
         if hist.empty:
             return {}
 
-        # Convert index to ET
         hist.index = hist.index.tz_convert(ET_OFFSET)
-
         by_day = {}
+
         for ts, row in hist.iterrows():
-            # filter to window
             h, m = ts.hour, ts.minute
-            win_start = h * 60 + m >= WINDOW_START_HOUR * 60 + WINDOW_START_MINUTE
-            win_end   = h * 60 + m <= WINDOW_END_HOUR   * 60 + WINDOW_END_MINUTE
-            if not (win_start and win_end):
+            mins = h * 60 + m
+            win_start = WINDOW_START_HOUR * 60 + WINDOW_START_MINUTE
+            win_end   = WINDOW_END_HOUR   * 60 + WINDOW_END_MINUTE
+            if not (win_start <= mins <= win_end):
                 continue
 
             day = ts.strftime("%Y-%m-%d")
-            if day not in by_day:
-                by_day[day] = []
-            by_day[day].append({
+            by_day.setdefault(day, []).append({
                 "time":   ts.strftime("%H:%M"),
                 "open":   round(float(row["Open"]),  4),
                 "high":   round(float(row["High"]),  4),
@@ -122,8 +144,8 @@ def fetch_candles(symbol):
 
 def run_day(symbol, candles):
     """
-    Replay one day's 1-min candles through the state machine.
-    Returns result dict or None if no reversal.
+    Replay one day's candles through the momentum → reversal state machine.
+    Returns a result dict, or None if no momentum was ever reached.
     """
     if not candles:
         return None
@@ -154,6 +176,7 @@ def run_day(symbol, candles):
                 peak_time     = t
 
         elif state == "MOMENTUM":
+            # Update rolling peak
             if price > peak_price:
                 peak_price = price
                 peak_time  = t
@@ -171,9 +194,10 @@ def run_day(symbol, candles):
                     "reversal_price": round(price, 4),
                     "reversal_time":  t,
                     "reversal_pct":   round(drop, 2),
+                    "status":         "REVERSED",
                 }
 
-    # Window ended — return partial info if momentum was seen
+    # Window ended — momentum hit but no reversal confirmed
     if state == "MOMENTUM":
         return {
             "symbol":         symbol,
@@ -186,50 +210,50 @@ def run_day(symbol, candles):
             "reversal_price": None,
             "reversal_time":  None,
             "reversal_pct":   None,
-            "note":           "momentum hit but no reversal within window",
+            "status":         "MOMENTUM",
+            "note":           "Momentum hit but no reversal within window",
         }
 
-    return None   # no momentum hit
+    return None   # never reached momentum threshold
 
 # ════════════════════════════════════════════════════════════════
 # MAIN
 # ════════════════════════════════════════════════════════════════
 
 def trading_days(start, end):
-    days = []
-    d = start
+    days, d = [], start
     while d <= end:
-        if d.weekday() < 5:   # Mon–Fri
+        if d.weekday() < 5:
             days.append(d.strftime("%Y-%m-%d"))
         d += timedelta(days=1)
     return days
 
 def main():
-    all_days    = trading_days(START_DATE, END_DATE)
-    results     = []   # one entry per (day, symbol) that had momentum or reversal
-    summary     = {
+    all_days = trading_days(START_DATE, END_DATE)
+    results  = []
+    summary  = {
         "total_days":      len(all_days),
         "total_reversals": 0,
         "total_momentum":  0,
         "by_symbol":       {},
     }
 
-    # Fetch all candles upfront (one API call per symbol)
-    print("Fetching 1-min candle data…")
+    print(f"\nFetching 1-min candle data for {len(WATCHLIST)} stock(s)...")
     all_candles = {}
     for sym in WATCHLIST:
-        print(f"  {sym}…")
+        print(f"  {sym}...")
         all_candles[sym] = fetch_candles(sym)
 
-    print(f"\nReplaying {len(all_days)} trading day(s)…\n")
+    print(f"\nReplaying {len(all_days)} trading day(s)...\n")
 
     for day in all_days:
         print(f"── {day} ──")
         day_hits = 0
+
         for sym in WATCHLIST:
             candles = all_candles[sym].get(day, [])
             if not candles:
-                print(f"  [{sym}] no data")
+                print(f"  [{sym}] no data for this day/window")
                 continue
 
             result = run_day(sym, candles)
@@ -238,22 +262,21 @@ def main():
                 results.append(result)
                 day_hits += 1
 
-                if result["reversal_price"] is not None:
+                if result["status"] == "REVERSED":
                     summary["total_reversals"] += 1
                     print(
-                        f"  [{sym}] ✅ REVERSAL  baseline=${result['baseline_price']} "
-                        f"→ peak=${result['peak_price']} ({result['momentum_pct']:+.2f}%) "
-                        f"→ reversal=${result['reversal_price']} (-{result['reversal_pct']:.2f}%)"
-                        f"  [{result['baseline_time']} → {result['peak_time']} → {result['reversal_time']}]"
+                        f"  [{sym}] REVERSAL  "
+                        f"baseline=${result['baseline_price']} ({result['baseline_time']}) "
+                        f"-> peak=${result['peak_price']} +{result['momentum_pct']}% ({result['peak_time']}) "
+                        f"-> reversal=${result['reversal_price']} -{result['reversal_pct']}% ({result['reversal_time']})"
                     )
                 else:
                     summary["total_momentum"] += 1
-                    print(f"  [{sym}] ⚡ momentum only (no reversal in window)")
+                    print(f"  [{sym}] MOMENTUM only — +{result['momentum_pct']}% (no reversal in window)")
 
-                # per-symbol stats
                 s = summary["by_symbol"].setdefault(sym, {"reversals": 0, "momentum_only": 0, "days": []})
                 s["days"].append(day)
-                if result["reversal_price"] is not None:
+                if result["status"] == "REVERSED":
                     s["reversals"] += 1
                 else:
                     s["momentum_only"] += 1
@@ -263,11 +286,10 @@ def main():
         if day_hits == 0:
             print("  (no signals today)")
 
-    # Save
     output = {
-        "generated_at":   datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
-        "start_date":     START_DATE.strftime("%Y-%m-%d"),
-        "end_date":       END_DATE.strftime("%Y-%m-%d"),
+        "generated_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
+        "start_date":   START_DATE.strftime("%Y-%m-%d"),
+        "end_date":     END_DATE.strftime("%Y-%m-%d"),
         "window_config": {
             "start":              f"{WINDOW_START_HOUR:02d}:{WINDOW_START_MINUTE:02d} ET",
             "end":                f"{WINDOW_END_HOUR:02d}:{WINDOW_END_MINUTE:02d} ET",
@@ -283,12 +305,16 @@ def main():
     with open(OUTPUT_FILE, "w") as f:
         json.dump(output, f, indent=2)
 
-    print(f"\n{'═'*50}")
-    print(f"Backtest complete.")
+    print(f"\n{'=' * 60}")
+    print(f"  Backtest complete")
     print(f"  Days scanned  : {len(all_days)}")
+    print(f"  Stocks        : {', '.join(WATCHLIST)}")
+    print(f"  Momentum %    : {MOMENTUM_THRESHOLD_PCT}%")
+    print(f"  Reversal %    : {REVERSAL_THRESHOLD_PCT}%")
     print(f"  Reversals     : {summary['total_reversals']}")
     print(f"  Momentum only : {summary['total_momentum']}")
-    print(f"  Results saved : {OUTPUT_FILE}")
+    print(f"  Output        : {OUTPUT_FILE}")
+    print(f"{'=' * 60}")
 
 if __name__ == "__main__":
     main()
