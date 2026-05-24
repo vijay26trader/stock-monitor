@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-24 10:39 UTC",
-  "start_date": "2026-04-25",
-  "end_date": "2025-05-20",
+  "generated_at": "2026-05-24 11:10 UTC",
+  "start_date": "2026-05-01",
+  "end_date": "2026-05-24",
   "window_config": {
     "start": "04:00 ET",
     "end": "05:00 ET",
@@ -9,19 +9,10 @@
     "reversal_threshold": 2.0
   },
   "watchlist": [
-    "AAPL",
-    "MSFT",
-    "GOOGL",
-    "TSLA",
-    "AMZN",
-    "NVDA",
-    "META",
-    "SPY",
-    "QQQ",
-    "AMD"
+    "PCLA"
   ],
   "summary": {
-    "total_days": 0,
+    "total_days": 16,
     "total_reversals": 0,
     "total_momentum": 0,
     "by_symbol": {}
