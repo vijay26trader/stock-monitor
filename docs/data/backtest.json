@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-05-24 11:06 UTC",
+  "generated_at": "2026-05-24 11:08 UTC",
   "start_date": "2026-04-25",
   "end_date": "2025-05-20",
   "window_config": {
     "start": "04:00 ET",
     "end": "05:00 ET",
-    "momentum_threshold": 20.0,
-    "reversal_threshold": 2.0
+    "momentum_threshold": 10.0,
+    "reversal_threshold": 1.0
   },
   "watchlist": [
     "PCLA"
