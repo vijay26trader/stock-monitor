@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-24 15:03 UTC",
-  "start_date": "2026-05-01",
-  "end_date": "2026-05-24",
+  "generated_at": "2026-05-24 15:19 UTC",
+  "start_date": "2026-05-22",
+  "end_date": "2026-05-22",
   "window_config": {
     "start": "04:00 ET",
     "end": "05:00 ET",
@@ -12,7 +12,7 @@
     "PCLA"
   ],
   "summary": {
-    "total_days": 16,
+    "total_days": 1,
     "total_reversals": 0,
     "total_momentum": 0,
     "by_symbol": {}
