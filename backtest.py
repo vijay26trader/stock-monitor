@@ -22,6 +22,8 @@ import os
 import requests
 import pytz
 from datetime import datetime, timedelta, date
+import sys
+sys.path.insert(0, os.path.dirname(__file__))
 
 # ════════════════════════════════════════════════════════════════
 # FIXED WINDOW SETTINGS
@@ -79,10 +81,18 @@ _reversal = os.environ.get("REVERSAL_THRESHOLD", "")
 START_DATE = parse_date(_start) if _start else today - timedelta(days=7)
 END_DATE   = parse_date(_end)   if _end   else today - timedelta(days=1)
 
-WATCHLIST = (
-    parse_watchlist(_watch) if _watch
-    else ["AAPL", "MSFT", "GOOGL", "TSLA", "AMZN", "NVDA", "META", "SPY", "QQQ", "AMD"]
-)
+if _watch:
+    WATCHLIST = parse_watchlist(_watch)
+else:
+    # No watchlist passed — build dynamically from Alpaca
+    # using price $1–$20 and volume >100K filters
+    print("No watchlist provided — building dynamic watchlist from Alpaca...")
+    from build_watchlist import build
+    WATCHLIST = build()
+    if not WATCHLIST:
+        print("ERROR: Dynamic watchlist is empty — check filters or API keys")
+        exit(1)
+    print(f"Dynamic watchlist: {len(WATCHLIST)} stocks\n")
 
 MOMENTUM_THRESHOLD_PCT = parse_float(_momentum, 20.0) if _momentum else 20.0
 REVERSAL_THRESHOLD_PCT = parse_float(_reversal,  2.0) if _reversal else  2.0

@@ -24,7 +24,10 @@ from datetime import datetime, timedelta
 # CONFIG  — edit these values
 # ════════════════════════════════════════════════════════════════
 
-WATCHLIST = ["AAPL", "MSFT", "GOOGL", "TSLA", "AMZN", "NVDA", "META", "SPY", "QQQ", "AMD"]
+# Watchlist is built dynamically at runtime by build_watchlist.py
+# Filters: price $1–$20, avg volume >100K/day
+# Override by setting WATCHLIST env var: "AAPL,TSLA,PCLA"
+WATCHLIST = []   # populated in run()
 
 # Monitoring window (ET)
 WINDOW_START_HOUR   = 4    # 4 AM ET
@@ -264,10 +267,26 @@ def process_symbol(symbol, candles, tracker, now_str, elapsed):
 # ════════════════════════════════════════════════════════════════
 
 def run():
+    global WATCHLIST
     now    = now_et()
     data   = load()
     active = in_window(now)
     today  = now.strftime("%Y-%m-%d")
+
+    # Build or reload watchlist once per day
+    _watch_env = os.environ.get("WATCHLIST", "")
+    if _watch_env:
+        WATCHLIST = [s.strip().upper() for s in _watch_env.split(",") if s.strip()]
+        print(f"Using env watchlist: {len(WATCHLIST)} stocks")
+    elif not WATCHLIST or data.get("last_scan_date") != today:
+        print("Building dynamic watchlist (price $1-$20, vol >100K)...")
+        import sys
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from build_watchlist import build
+        WATCHLIST = build()
+        if not WATCHLIST:
+            print("ERROR: Dynamic watchlist is empty — check filters or API keys")
+            return
 
     # Reset on new day
     if data.get("last_scan_date") != today:
