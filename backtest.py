@@ -129,43 +129,84 @@ def fetch_candles(symbol):
     end_utc   = end_et.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     url    = f"{ALPACA_BASE}/stocks/{symbol}/bars"
-    params = {
-        "timeframe": "1Min",
-        "start":     start_utc,
-        "end":       end_utc,
-        "feed":      "iex",        # free tier; change to "sip" with paid plan
-        "limit":     10000,
-    }
 
+    # Try SIP feed first (most complete, includes pre-market for all stocks)
+    # Fall back to IEX if SIP returns nothing (IEX is subset of stocks only)
     by_day = {}
-    next_token = None
+    for feed in ["sip", "iex"]:
+        params = {
+            "timeframe": "1Min",
+            "start":     start_utc,
+            "end":       end_utc,
+            "feed":      feed,
+            "limit":     10000,
+        }
 
-    while True:
-        if next_token:
-            params["page_token"] = next_token
+        next_token = None
+        feed_bars  = 0
 
-        try:
-            resp = requests.get(url, headers=alpaca_headers(), params=params, timeout=30)
-        except Exception as e:
-            print(f"  [{symbol}] request error: {e}")
-            return {}
+        print(f"  [{symbol}] trying feed={feed} | {start_utc} → {end_utc}")
 
-        if resp.status_code == 403:
-            print(f"  [{symbol}] 403 Forbidden — check your Alpaca API keys in GitHub Secrets")
-            return {}
-        if resp.status_code == 422:
-            print(f"  [{symbol}] 422 Unprocessable — ticker may not exist on Alpaca/IEX feed")
-            return {}
-        if resp.status_code != 200:
-            print(f"  [{symbol}] HTTP {resp.status_code}: {resp.text[:200]}")
-            return {}
+        while True:
+            if next_token:
+                params["page_token"] = next_token
 
-        data = resp.json()
-        bars = data.get("bars", []) or []
+            try:
+                resp = requests.get(url, headers=alpaca_headers(), params=params, timeout=30)
+            except Exception as e:
+                print(f"  [{symbol}] request error: {e}")
+                break
 
-        if not bars:
-            print(f"  [{symbol}] no bars returned from Alpaca for this window")
-            break
+            print(f"  [{symbol}] HTTP {resp.status_code} (feed={feed})")
+
+            if resp.status_code == 403:
+                print(f"  [{symbol}] 403 — check ALPACA_API_KEY / ALPACA_SECRET_KEY in GitHub Secrets")
+                return {}
+            if resp.status_code == 422:
+                print(f"  [{symbol}] 422 — ticker not found on {feed} feed, trying next feed")
+                break
+            if resp.status_code != 200:
+                print(f"  [{symbol}] HTTP {resp.status_code}: {resp.text[:200]}")
+                break
+
+            data_json = resp.json()
+            bars      = data_json.get("bars", []) or []
+            feed_bars += len(bars)
+
+            print(f"  [{symbol}] {len(bars)} bar(s) in this page (feed={feed})")
+
+            for bar in bars:
+                ts_utc = datetime.strptime(bar["t"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=pytz.utc)
+                ts_et  = ts_utc.astimezone(ET_TZ)
+
+                mins      = ts_et.hour * 60 + ts_et.minute
+                win_start = WINDOW_START_HOUR * 60 + WINDOW_START_MINUTE
+                win_end   = WINDOW_END_HOUR   * 60 + WINDOW_END_MINUTE
+                if not (win_start <= mins <= win_end):
+                    continue
+
+                day = ts_et.strftime("%Y-%m-%d")
+                by_day.setdefault(day, []).append({
+                    "time":   ts_et.strftime("%H:%M"),
+                    "open":   round(float(bar["o"]), 4),
+                    "high":   round(float(bar["h"]), 4),
+                    "low":    round(float(bar["l"]), 4),
+                    "close":  round(float(bar["c"]), 4),
+                    "volume": int(bar["v"]),
+                })
+
+            next_token = data_json.get("next_page_token")
+            if not next_token:
+                break
+
+        kept = sum(len(v) for v in by_day.values())
+        print(f"  [{symbol}] feed={feed} total bars={feed_bars}, in-window={kept}")
+
+        if kept > 0:
+            print(f"  [{symbol}] using feed={feed}")
+            break   # got data, no need to try next feed
+        else:
+            by_day = {}   # reset for next feed attempt
 
         for bar in bars:
             # bar['t'] is RFC3339 UTC e.g. "2026-05-22T08:00:00Z"
@@ -188,10 +229,6 @@ def fetch_candles(symbol):
                 "close":  round(float(bar["c"]), 4),
                 "volume": int(bar["v"]),
             })
-
-        next_token = data.get("next_page_token")
-        if not next_token:
-            break
 
     kept = sum(len(v) for v in by_day.values())
     print(f"  [{symbol}] {kept} candle(s) in window across {len(by_day)} day(s)")
