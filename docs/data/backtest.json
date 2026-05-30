@@ -1,13 +1,13 @@
 {
-  "generated_at": "2026-05-30 11:36 UTC",
+  "generated_at": "2026-05-30 11:47 UTC",
   "start_date": "2026-05-22",
   "end_date": "2026-05-22",
   "data_source": "Alpaca Markets (IEX feed)",
   "window_config": {
     "start": "04:00 ET",
     "end": "05:00 ET",
-    "momentum_threshold": 20.0,
-    "reversal_threshold": 2.0
+    "momentum_threshold": 10.0,
+    "reversal_threshold": 1.0
   },
   "watchlist": [
     "PCLA"
