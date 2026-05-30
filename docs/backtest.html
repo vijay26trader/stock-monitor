@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -157,7 +158,9 @@ footer p{font-size:.68rem;color:var(--muted2);font-family:'JetBrains Mono',monos
 
 </div>
 <script>
-const DATA = './data/backtest.json';
+// Robust path — works regardless of repo name on GitHub Pages
+const BASE = window.location.pathname.replace(/\/[^/]*$/, '');
+const DATA = BASE + '/data/backtest.json';
 let allResults = [];
 let activeFilter = 'all';
 
@@ -201,7 +204,7 @@ function renderTable(){
 
   let html=`<div class="tbl-wrap"><table>
     <thead><tr>
-      <th>Date</th><th>Symbol</th><th>Type</th>
+      <th>Date</th><th>Symbol</th><th>Avg Vol</th><th>Type</th>
       <th>Baseline</th><th>Peak ↑</th><th>Momentum %</th><th>Peak time</th>
       <th>Reversal ↓</th><th>Pullback %</th><th>Reversal time</th>
     </tr></thead><tbody>`;
@@ -210,9 +213,13 @@ function renderTable(){
     const isRev = r.reversal_price != null;
     const momPct = r.momentum_pct!=null ? '+'+parseFloat(r.momentum_pct).toFixed(2)+'%' : '—';
     const revPct = r.reversal_pct!=null ? '-'+parseFloat(r.reversal_pct).toFixed(2)+'%' : '—';
+    const vol = r.avg_volume ? (r.avg_volume >= 1e6
+        ? (r.avg_volume/1e6).toFixed(1)+'M'
+        : (r.avg_volume/1e3).toFixed(0)+'K') : '—';
     html+=`<tr>
       <td class="date">${r.date}</td>
       <td class="sym">${r.symbol}</td>
+      <td style="color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:.75rem">${vol}</td>
       <td><span class="tag ${isRev?'tag-rev':'tag-mom'}">${isRev?'reversal':'momentum'}</span></td>
       <td style="color:var(--blue)">${$p(r.baseline_price)}<br><span style="color:var(--muted2);font-size:.65rem">${r.baseline_time||''}</span></td>
       <td style="color:var(--green)">${$p(r.peak_price)}</td>
@@ -222,7 +229,7 @@ function renderTable(){
       <td style="color:${isRev?'var(--red)':'var(--muted)'};font-weight:700">${isRev?revPct:'—'}</td>
       <td style="color:var(--muted)">${r.reversal_time||'—'}</td>
     </tr>`;
-    if(r.note) html+=`<tr><td colspan="10" style="font-size:.65rem;color:var(--muted);padding:4px 14px 8px;font-family:'JetBrains Mono',monospace">ℹ️ ${r.note}</td></tr>`;
+    if(r.note) html+=`<tr><td colspan="11" style="font-size:.65rem;color:var(--muted);padding:4px 14px 8px;font-family:'JetBrains Mono',monospace">ℹ️ ${r.note}</td></tr>`;
   });
 
   html+=`</tbody></table></div>
@@ -232,8 +239,12 @@ function renderTable(){
 
 async function load(){
   try{
-    const res  = await fetch(DATA+'?t='+Date.now());
-    const data = await res.json();
+    const res = await fetch(DATA+'?t='+Date.now());
+    if(!res.ok) throw new Error(`HTTP ${res.status} fetching ${DATA}`);
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch(e){ throw new Error(`JSON parse error: ${e.message} — response was: ${text.slice(0,120)}`); }
 
     document.getElementById('loader').style.display='none';
     document.getElementById('app').style.display='block';
