@@ -3,7 +3,7 @@ name: Stock Momentum Monitor
 on:
   schedule:
     - cron: '* 8-9 * * 1-5'   # every minute, 4AM-5AM ET (UTC-4 EDT)
-  workflow_dispatch:            # manual trigger for testing
+  workflow_dispatch:
 
 jobs:
   scan:
@@ -21,9 +21,12 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install yfinance pandas
+        run: pip install requests pytz
 
       - name: Run momentum scanner
+        env:
+          ALPACA_API_KEY:    ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
         run: python stock_monitor.py
 
       - name: Commit & push updated data

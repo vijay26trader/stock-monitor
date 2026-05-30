@@ -4,23 +4,23 @@ on:
   workflow_dispatch:
     inputs:
       start_date:
-        description: 'Start date (YYYY-MM-DD) — max 30 days ago'
+        description: 'Start date (YYYY-MM-DD)'
         required: true
-        default: '2026-05-01'
+        default: '2026-05-22'
       end_date:
         description: 'End date (YYYY-MM-DD)'
         required: true
-        default: '2026-05-24'
+        default: '2026-05-22'
       watchlist:
-        description: 'Stocks to scan — comma separated (e.g. AAPL,TSLA,INTC)'
+        description: 'Stocks — comma separated (e.g. PCLA,AAPL,TSLA)'
         required: false
-        default: 'NVDA,AMD'
+        default: 'AAPL,MSFT,GOOGL,TSLA,AMZN,NVDA,META,SPY,QQQ,AMD'
       momentum_threshold:
-        description: 'Momentum threshold % — upward move to qualify (e.g. 20)'
+        description: 'Momentum threshold % (e.g. 20)'
         required: false
         default: '20.0'
       reversal_threshold:
-        description: 'Reversal threshold % — pullback from peak to trigger (e.g. 2)'
+        description: 'Reversal threshold % (e.g. 2)'
         required: false
         default: '2.0'
 
@@ -40,7 +40,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install yfinance pandas
+        run: pip install requests pytz pandas
 
       - name: Run backtest
         env:
@@ -49,6 +49,8 @@ jobs:
           WATCHLIST:           ${{ github.event.inputs.watchlist }}
           MOMENTUM_THRESHOLD:  ${{ github.event.inputs.momentum_threshold }}
           REVERSAL_THRESHOLD:  ${{ github.event.inputs.reversal_threshold }}
+          ALPACA_API_KEY:      ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_SECRET_KEY:   ${{ secrets.ALPACA_SECRET_KEY }}
         run: python backtest.py
 
       - name: Commit & push results

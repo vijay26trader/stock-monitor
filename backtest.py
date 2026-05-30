@@ -1,28 +1,30 @@
 """
 Backtest — Momentum Reversal Strategy
 ──────────────────────────────────────
-Fetches historical 1-min candles (up to 30 days back via yfinance)
-and replays the exact same state machine as stock_monitor.py
-for each day in the date range, within the configured time window.
+Uses Alpaca Markets API for 1-min pre-market data (4 AM ET onwards).
+yfinance is NOT used — it only returns regular market hours (9:30 AM+).
 
-Results written to docs/data/backtest.json for the dashboard.
+Free Alpaca account: https://app.alpaca.markets/signup
+API keys go in GitHub Secrets:
+  ALPACA_API_KEY
+  ALPACA_SECRET_KEY
 
 GitHub Actions inputs (all passed as env vars):
-  START_DATE          e.g. 2025-05-01
-  END_DATE            e.g. 2025-05-20
-  WATCHLIST           e.g. AAPL,TSLA,INTC
+  START_DATE          e.g. 2026-05-22
+  END_DATE            e.g. 2026-05-22
+  WATCHLIST           e.g. AAPL,TSLA,PCLA
   MOMENTUM_THRESHOLD  e.g. 20.0
   REVERSAL_THRESHOLD  e.g. 2.0
 """
 
-import yfinance as yf
 import json
 import os
+import requests
 import pytz
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, date
 
 # ════════════════════════════════════════════════════════════════
-# FIXED WINDOW SETTINGS  (edit here if needed)
+# FIXED WINDOW SETTINGS
 # ════════════════════════════════════════════════════════════════
 
 WINDOW_START_HOUR   = 4
@@ -31,28 +33,40 @@ WINDOW_END_HOUR     = 5
 WINDOW_END_MINUTE   = 0
 
 OUTPUT_FILE = "docs/data/backtest.json"
+ET_TZ       = pytz.timezone("America/New_York")
 
 # ════════════════════════════════════════════════════════════════
-# HELPERS
+# ALPACA CONFIG
+# ════════════════════════════════════════════════════════════════
+
+ALPACA_API_KEY    = os.environ.get("ALPACA_API_KEY",    "")
+ALPACA_SECRET_KEY = os.environ.get("ALPACA_SECRET_KEY", "")
+
+# Alpaca data base URL (free tier uses iex feed; paid uses sip)
+ALPACA_BASE = "https://data.alpaca.markets/v2"
+
+def alpaca_headers():
+    return {
+        "APCA-API-KEY-ID":     ALPACA_API_KEY,
+        "APCA-API-SECRET-KEY": ALPACA_SECRET_KEY,
+    }
+
+# ════════════════════════════════════════════════════════════════
+# READ INPUTS FROM ENV
 # ════════════════════════════════════════════════════════════════
 
 def parse_date(s):
     return datetime.strptime(s.strip(), "%Y-%m-%d").date()
 
 def parse_watchlist(s):
-    """Comma-separated tickers → clean uppercase list."""
     return [t.strip().upper() for t in s.split(",") if t.strip()]
 
 def parse_float(s, default):
     try:
         return float(s.strip())
     except Exception:
-        print(f"  Could not parse '{s}' as a number — using default {default}")
+        print(f"  Could not parse '{s}' — using default {default}")
         return default
-
-# ════════════════════════════════════════════════════════════════
-# READ ALL INPUTS FROM ENV  (set by GitHub Actions workflow)
-# ════════════════════════════════════════════════════════════════
 
 today = datetime.utcnow().date()
 
@@ -73,97 +87,121 @@ WATCHLIST = (
 MOMENTUM_THRESHOLD_PCT = parse_float(_momentum, 20.0) if _momentum else 20.0
 REVERSAL_THRESHOLD_PCT = parse_float(_reversal,  2.0) if _reversal else  2.0
 
-# yfinance caps 1-min history at 30 days
-EARLIEST = today - timedelta(days=29)
-if START_DATE < EARLIEST:
-    print(f"  yfinance only provides 1-min data for the last 30 days. Clamping start to {EARLIEST}.")
-    START_DATE = EARLIEST
-
 print("=" * 60)
 print(f"  Backtest  : {START_DATE} → {END_DATE}")
 print(f"  Window    : {WINDOW_START_HOUR:02d}:{WINDOW_START_MINUTE:02d} – {WINDOW_END_HOUR:02d}:{WINDOW_END_MINUTE:02d} ET")
 print(f"  Stocks    : {', '.join(WATCHLIST)}")
 print(f"  Momentum  : >= +{MOMENTUM_THRESHOLD_PCT}%")
 print(f"  Reversal  : >= -{REVERSAL_THRESHOLD_PCT}% from peak")
+print(f"  Data src  : Alpaca Markets (pre-market capable)")
 print("=" * 60)
 
-# ════════════════════════════════════════════════════════════════
-# TIMEZONE
-# ════════════════════════════════════════════════════════════════
+if not ALPACA_API_KEY or not ALPACA_SECRET_KEY:
+    print("\nERROR: ALPACA_API_KEY and ALPACA_SECRET_KEY must be set as GitHub Secrets.")
+    print("  1. Sign up free at https://app.alpaca.markets/signup")
+    print("  2. Go to repo Settings → Secrets → Actions → New secret")
+    print("  3. Add ALPACA_API_KEY and ALPACA_SECRET_KEY")
+    exit(1)
 
-ET_TZ = pytz.timezone("America/New_York")  # auto-handles EDT/EST
-
 # ════════════════════════════════════════════════════════════════
-# FETCH 1-MIN CANDLES
+# FETCH 1-MIN CANDLES FROM ALPACA
 # ════════════════════════════════════════════════════════════════
 
 def fetch_candles(symbol):
     """
-    Returns dict keyed by date string:
+    Returns dict keyed by ET date string:
       { 'YYYY-MM-DD': [ {time, open, high, low, close, volume}, ... ] }
-    Only candles within the configured time window are included.
+    Includes pre-market candles (4 AM ET onwards).
     """
-    try:
-        t = yf.Ticker(symbol)
-        hist = t.history(
-            start=START_DATE.strftime("%Y-%m-%d"),
-            end=(END_DATE + timedelta(days=1)).strftime("%Y-%m-%d"),
-            interval="1m",
-        )
-        if hist.empty:
-            print(f"  [{symbol}] DEBUG: yfinance returned empty — ticker invalid or data unavailable")
+    # Alpaca needs RFC3339 UTC timestamps
+    # Start = window start on START_DATE in ET → convert to UTC
+    start_et = ET_TZ.localize(datetime(
+        START_DATE.year, START_DATE.month, START_DATE.day,
+        WINDOW_START_HOUR, WINDOW_START_MINUTE, 0
+    ))
+    # End = window end on END_DATE in ET → convert to UTC
+    end_et = ET_TZ.localize(datetime(
+        END_DATE.year, END_DATE.month, END_DATE.day,
+        WINDOW_END_HOUR, WINDOW_END_MINUTE, 0
+    ))
+
+    start_utc = start_et.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    end_utc   = end_et.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+    url    = f"{ALPACA_BASE}/stocks/{symbol}/bars"
+    params = {
+        "timeframe": "1Min",
+        "start":     start_utc,
+        "end":       end_utc,
+        "feed":      "iex",        # free tier; change to "sip" with paid plan
+        "limit":     10000,
+    }
+
+    by_day = {}
+    next_token = None
+
+    while True:
+        if next_token:
+            params["page_token"] = next_token
+
+        try:
+            resp = requests.get(url, headers=alpaca_headers(), params=params, timeout=30)
+        except Exception as e:
+            print(f"  [{symbol}] request error: {e}")
             return {}
 
-        # DEBUG: show raw timestamps before conversion
-        print(f"  [{symbol}] DEBUG: {len(hist)} total candles fetched")
-        print(f"  [{symbol}] DEBUG: raw tz        = {hist.index.tzinfo}")
-        print(f"  [{symbol}] DEBUG: first raw ts  = {hist.index[0]}")
-        print(f"  [{symbol}] DEBUG: last  raw ts  = {hist.index[-1]}")
+        if resp.status_code == 403:
+            print(f"  [{symbol}] 403 Forbidden — check your Alpaca API keys in GitHub Secrets")
+            return {}
+        if resp.status_code == 422:
+            print(f"  [{symbol}] 422 Unprocessable — ticker may not exist on Alpaca/IEX feed")
+            return {}
+        if resp.status_code != 200:
+            print(f"  [{symbol}] HTTP {resp.status_code}: {resp.text[:200]}")
+            return {}
 
-        hist.index = hist.index.tz_convert(ET_TZ)
+        data = resp.json()
+        bars = data.get("bars", []) or []
 
-        print(f"  [{symbol}] DEBUG: first ET ts   = {hist.index[0]}")
-        print(f"  [{symbol}] DEBUG: last  ET ts   = {hist.index[-1]}")
-        unique_hours = sorted(set(ts.hour for ts in hist.index))
-        print(f"  [{symbol}] DEBUG: ET hours present = {unique_hours}")
-        print(f"  [{symbol}] DEBUG: window = {WINDOW_START_HOUR:02d}:{WINDOW_START_MINUTE:02d}-{WINDOW_END_HOUR:02d}:{WINDOW_END_MINUTE:02d} ET")
+        if not bars:
+            print(f"  [{symbol}] no bars returned from Alpaca for this window")
+            break
 
-        by_day = {}
-        for ts, row in hist.iterrows():
-            h, m = ts.hour, ts.minute
-            mins = h * 60 + m
+        for bar in bars:
+            # bar['t'] is RFC3339 UTC e.g. "2026-05-22T08:00:00Z"
+            ts_utc = datetime.strptime(bar["t"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=pytz.utc)
+            ts_et  = ts_utc.astimezone(ET_TZ)
+
+            # Filter to window
+            mins      = ts_et.hour * 60 + ts_et.minute
             win_start = WINDOW_START_HOUR * 60 + WINDOW_START_MINUTE
             win_end   = WINDOW_END_HOUR   * 60 + WINDOW_END_MINUTE
             if not (win_start <= mins <= win_end):
                 continue
 
-            day = ts.strftime("%Y-%m-%d")
+            day = ts_et.strftime("%Y-%m-%d")
             by_day.setdefault(day, []).append({
-                "time":   ts.strftime("%H:%M"),
-                "open":   round(float(row["Open"]),  4),
-                "high":   round(float(row["High"]),  4),
-                "low":    round(float(row["Low"]),   4),
-                "close":  round(float(row["Close"]), 4),
-                "volume": int(row["Volume"]),
+                "time":   ts_et.strftime("%H:%M"),
+                "open":   round(float(bar["o"]), 4),
+                "high":   round(float(bar["h"]), 4),
+                "low":    round(float(bar["l"]), 4),
+                "close":  round(float(bar["c"]), 4),
+                "volume": int(bar["v"]),
             })
 
-        kept = sum(len(v) for v in by_day.values())
-        print(f"  [{symbol}] DEBUG: candles after window filter = {kept}")
-        return by_day
+        next_token = data.get("next_page_token")
+        if not next_token:
+            break
 
-    except Exception as e:
-        print(f"  [{symbol}] fetch error: {e}")
-        return {}
+    kept = sum(len(v) for v in by_day.values())
+    print(f"  [{symbol}] {kept} candle(s) in window across {len(by_day)} day(s)")
+    return by_day
 
 # ════════════════════════════════════════════════════════════════
 # STATE MACHINE  (identical logic to stock_monitor.py)
 # ════════════════════════════════════════════════════════════════
 
 def run_day(symbol, candles):
-    """
-    Replay one day's candles through the momentum → reversal state machine.
-    Returns a result dict, or None if no momentum was ever reached.
-    """
     if not candles:
         return None
 
@@ -193,7 +231,6 @@ def run_day(symbol, candles):
                 peak_time     = t
 
         elif state == "MOMENTUM":
-            # Update rolling peak
             if price > peak_price:
                 peak_price = price
                 peak_time  = t
@@ -214,7 +251,6 @@ def run_day(symbol, candles):
                     "status":         "REVERSED",
                 }
 
-    # Window ended — momentum hit but no reversal confirmed
     if state == "MOMENTUM":
         return {
             "symbol":         symbol,
@@ -231,7 +267,7 @@ def run_day(symbol, candles):
             "note":           "Momentum hit but no reversal within window",
         }
 
-    return None   # never reached momentum threshold
+    return None
 
 # ════════════════════════════════════════════════════════════════
 # MAIN
@@ -255,7 +291,7 @@ def main():
         "by_symbol":       {},
     }
 
-    print(f"\nFetching 1-min candle data for {len(WATCHLIST)} stock(s)...")
+    print(f"\nFetching pre-market 1-min data for {len(WATCHLIST)} stock(s)...")
     all_candles = {}
     for sym in WATCHLIST:
         print(f"  {sym}...")
@@ -307,6 +343,7 @@ def main():
         "generated_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
         "start_date":   START_DATE.strftime("%Y-%m-%d"),
         "end_date":     END_DATE.strftime("%Y-%m-%d"),
+        "data_source":  "Alpaca Markets (IEX feed)",
         "window_config": {
             "start":              f"{WINDOW_START_HOUR:02d}:{WINDOW_START_MINUTE:02d} ET",
             "end":                f"{WINDOW_END_HOUR:02d}:{WINDOW_END_MINUTE:02d} ET",
