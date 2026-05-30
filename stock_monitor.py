@@ -131,34 +131,38 @@ def get_candles(symbol):
     start_utc = start_et.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     end_utc   = end_et.astimezone(pytz.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    url    = f"{ALPACA_BASE}/stocks/{symbol}/bars"
-    params = {
-        "timeframe": "1Min",
-        "start":     start_utc,
-        "end":       end_utc,
-        "feed":      "iex",     # free tier; change to "sip" with paid Alpaca plan
-        "limit":     200,
-    }
+    url  = f"{ALPACA_BASE}/stocks/{symbol}/bars"
+    rows = []
 
-    try:
-        resp = requests.get(url, headers=alpaca_headers(), params=params, timeout=15)
+    # Try SIP first (full tape, all stocks, pre-market), fall back to IEX
+    for feed in ["sip", "iex"]:
+        params = {
+            "timeframe": "1Min",
+            "start":     start_utc,
+            "end":       end_utc,
+            "feed":      feed,
+            "limit":     200,
+        }
+        try:
+            resp = requests.get(url, headers=alpaca_headers(), params=params, timeout=15)
+        except Exception as e:
+            print(f"  [{symbol}] request error: {e}")
+            return []
+
         if resp.status_code == 403:
             print(f"  [{symbol}] Alpaca 403 — check API keys in GitHub Secrets")
             return []
         if resp.status_code == 422:
-            print(f"  [{symbol}] Alpaca 422 — ticker not found on IEX feed")
-            return []
+            continue   # ticker not on this feed, try next
         if resp.status_code != 200:
             print(f"  [{symbol}] Alpaca HTTP {resp.status_code}: {resp.text[:120]}")
-            return []
+            continue
 
         bars = resp.json().get("bars", []) or []
-        rows = []
         for bar in bars:
             ts_utc = datetime.strptime(bar["t"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=pytz.utc)
             ts_et  = ts_utc.astimezone(ET_TZ)
 
-            # Safety: confirm within window
             mins      = ts_et.hour * 60 + ts_et.minute
             win_start = WINDOW_START_HOUR * 60 + WINDOW_START_MINUTE
             win_end   = WINDOW_END_HOUR   * 60 + WINDOW_END_MINUTE
@@ -173,11 +177,11 @@ def get_candles(symbol):
                 "close":  round(float(bar["c"]), 4),
                 "volume": int(bar["v"]),
             })
-        return rows
 
-    except Exception as e:
-        print(f"  [{symbol}] fetch error: {e}")
-        return []
+        if rows:
+            break   # got data, no need to try next feed
+
+    return rows
 
 # ════════════════════════════════════════════════════════════════
 # STATE MACHINE
@@ -209,9 +213,9 @@ def process_symbol(symbol, candles, tracker, now_str, elapsed):
     # ── WATCHING ────────────────────────────────────────────────
     if status == "WATCHING":
         if "baseline_price" not in entry:
-            entry["baseline_price"] = price
+            entry["baseline_price"] = latest["open"]   # use open of first candle, not close
             entry["baseline_time"]  = latest["time"]
-            print(f"  [{symbol}] baseline set ${price} @ {latest['time']}")
+            print(f"  [{symbol}] baseline set ${latest['open']} (open) @ {latest['time']}")
 
         baseline          = entry["baseline_price"]
         pct_from_baseline = (price - baseline) / baseline * 100

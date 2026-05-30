@@ -145,7 +145,6 @@ def fetch_candles(symbol):
         next_token = None
         feed_bars  = 0
 
-        print(f"  [{symbol}] trying feed={feed} | {start_utc} → {end_utc}")
 
         while True:
             if next_token:
@@ -157,7 +156,6 @@ def fetch_candles(symbol):
                 print(f"  [{symbol}] request error: {e}")
                 break
 
-            print(f"  [{symbol}] HTTP {resp.status_code} (feed={feed})")
 
             if resp.status_code == 403:
                 print(f"  [{symbol}] 403 — check ALPACA_API_KEY / ALPACA_SECRET_KEY in GitHub Secrets")
@@ -173,7 +171,6 @@ def fetch_candles(symbol):
             bars      = data_json.get("bars", []) or []
             feed_bars += len(bars)
 
-            print(f"  [{symbol}] {len(bars)} bar(s) in this page (feed={feed})")
 
             for bar in bars:
                 ts_utc = datetime.strptime(bar["t"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=pytz.utc)
@@ -200,7 +197,6 @@ def fetch_candles(symbol):
                 break
 
         kept = sum(len(v) for v in by_day.values())
-        print(f"  [{symbol}] feed={feed} total bars={feed_bars}, in-window={kept}")
 
         if kept > 0:
             print(f"  [{symbol}] using feed={feed}")
@@ -256,7 +252,7 @@ def run_day(symbol, candles):
 
         if state == "WATCHING":
             if baseline_price is None:
-                baseline_price = price
+                baseline_price = c["open"]   # use open of first candle, not close
                 baseline_time  = t
 
             pct = (price - baseline_price) / baseline_price * 100
@@ -380,7 +376,7 @@ def main():
         "generated_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC"),
         "start_date":   START_DATE.strftime("%Y-%m-%d"),
         "end_date":     END_DATE.strftime("%Y-%m-%d"),
-        "data_source":  "Alpaca Markets (IEX feed)",
+        "data_source":  "Alpaca Markets (SIP/IEX feed)",
         "window_config": {
             "start":              f"{WINDOW_START_HOUR:02d}:{WINDOW_START_MINUTE:02d} ET",
             "end":                f"{WINDOW_END_HOUR:02d}:{WINDOW_END_MINUTE:02d} ET",
