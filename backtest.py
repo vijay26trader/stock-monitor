@@ -26,13 +26,22 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 # ════════════════════════════════════════════════════════════════
-# FIXED WINDOW SETTINGS
+# WINDOW SETTINGS  — read from env (set by workflow input)
 # ════════════════════════════════════════════════════════════════
 
-WINDOW_START_HOUR   = 4
-WINDOW_START_MINUTE = 0
-WINDOW_END_HOUR     = 5
-WINDOW_END_MINUTE   = 0
+def _parse_hhmm(s, default_hour, default_minute):
+    """Parse HH:MM string into (hour, minute). Falls back to defaults."""
+    try:
+        h, m = s.strip().split(":")
+        return int(h), int(m)
+    except Exception:
+        return default_hour, default_minute
+
+_ws = os.environ.get("WINDOW_START", "04:00")
+_we = os.environ.get("WINDOW_END",   "05:00")
+
+WINDOW_START_HOUR, WINDOW_START_MINUTE = _parse_hhmm(_ws, 4, 0)
+WINDOW_END_HOUR,   WINDOW_END_MINUTE   = _parse_hhmm(_we, 5, 0)
 
 OUTPUT_FILE = "docs/data/backtest.json"
 ET_TZ       = pytz.timezone("America/New_York")
@@ -81,17 +90,24 @@ _reversal = os.environ.get("REVERSAL_THRESHOLD", "")
 START_DATE = parse_date(_start) if _start else today - timedelta(days=7)
 END_DATE   = parse_date(_end)   if _end   else today - timedelta(days=1)
 
+WATCHLIST_DETAILS = {}   # symbol -> {price, volume} from snapshot
+
 if _watch:
     WATCHLIST = parse_watchlist(_watch)
 else:
     # No watchlist passed — build dynamically from Alpaca
-    # using price $1–$20 and volume >100K filters
     print("No watchlist provided — building dynamic watchlist from Alpaca...")
-    from build_watchlist import build
+    from build_watchlist import build, get_snapshots_batch, get_all_assets
     WATCHLIST = build()
     if not WATCHLIST:
         print("ERROR: Dynamic watchlist is empty — check filters or API keys")
         exit(1)
+    # Load volume details from saved watchlist.json
+    wl_file = "docs/data/watchlist.json"
+    if os.path.exists(wl_file):
+        with open(wl_file) as f:
+            wl_data = json.load(f)
+        WATCHLIST_DETAILS = {d["symbol"]: d for d in wl_data.get("details", [])}
     print(f"Dynamic watchlist: {len(WATCHLIST)} stocks\n")
 
 MOMENTUM_THRESHOLD_PCT = parse_float(_momentum, 20.0) if _momentum else 20.0
@@ -282,6 +298,7 @@ def run_day(symbol, candles):
             if drop >= REVERSAL_THRESHOLD_PCT:
                 return {
                     "symbol":         symbol,
+                    "avg_volume":     int(WATCHLIST_DETAILS.get(symbol, {}).get("volume", 0)) or None,
                     "baseline_price": baseline_price,
                     "baseline_time":  baseline_time,
                     "momentum_pct":   momentum_pct,
@@ -301,6 +318,7 @@ def run_day(symbol, candles):
             "baseline_time":  baseline_time,
             "momentum_pct":   momentum_pct,
             "momentum_time":  momentum_time,
+            "avg_volume":     int(WATCHLIST_DETAILS.get(symbol, {}).get("volume", 0)) or None,
             "peak_price":     round(peak_price, 4),
             "peak_time":      peak_time,
             "reversal_price": None,

@@ -29,11 +29,21 @@ from datetime import datetime, timedelta
 # Override by setting WATCHLIST env var: "AAPL,TSLA,PCLA"
 WATCHLIST = []   # populated in run()
 
-# Monitoring window (ET)
-WINDOW_START_HOUR   = 4    # 4 AM ET
-WINDOW_START_MINUTE = 0
-WINDOW_END_HOUR     = 5    # 5 AM ET
-WINDOW_END_MINUTE   = 0
+# Monitoring window (ET) — overridden by WINDOW_START / WINDOW_END env vars
+def _parse_hhmm(s, default_hour, default_minute):
+    """Parse HH:MM string into (hour, minute). Falls back to defaults."""
+    try:
+        h, m = s.strip().split(":")
+        return int(h), int(m)
+    except Exception:
+        return default_hour, default_minute
+
+import os as _os
+_ws = _os.environ.get("WINDOW_START", "04:00")
+_we = _os.environ.get("WINDOW_END",   "05:00")
+
+WINDOW_START_HOUR, WINDOW_START_MINUTE = _parse_hhmm(_ws, 4, 0)
+WINDOW_END_HOUR,   WINDOW_END_MINUTE   = _parse_hhmm(_we, 5, 0)
 
 # Momentum: upward move % from baseline to qualify
 MOMENTUM_THRESHOLD_PCT = 20.0

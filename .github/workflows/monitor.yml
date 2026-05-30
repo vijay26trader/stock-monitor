@@ -2,8 +2,20 @@ name: Stock Momentum Monitor
 
 on:
   schedule:
-    - cron: '* 8-9 * * 1-5'   # every minute, 4AM-5AM ET (UTC-4 EDT)
+    # Runs every minute Mon-Fri. Covers 4AM-9AM ET (8AM-1PM UTC in EDT).
+    # The Python script checks if current time is within WINDOW_START-WINDOW_END
+    # and exits early if outside — so this wide cron is safe.
+    - cron: '* 8-13 * * 1-5'
   workflow_dispatch:
+    inputs:
+      window_start:
+        description: 'Window start time ET (HH:MM, 24hr e.g. 04:00)'
+        required: false
+        default: '04:00'
+      window_end:
+        description: 'Window end time ET (HH:MM, 24hr e.g. 05:00)'
+        required: false
+        default: '05:00'
 
 jobs:
   scan:
@@ -27,11 +39,11 @@ jobs:
         env:
           ALPACA_API_KEY:    ${{ secrets.ALPACA_API_KEY }}
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
-          # Optional: override dynamic watchlist with specific tickers
-          # WATCHLIST: "PCLA,AAPL,TSLA"
-          PRICE_MIN:  "1"
-          PRICE_MAX:  "20"
-          MIN_VOLUME: "100000"
+          WINDOW_START:      ${{ github.event.inputs.window_start || '04:00' }}
+          WINDOW_END:        ${{ github.event.inputs.window_end   || '05:00' }}
+          PRICE_MIN:         "1"
+          PRICE_MAX:         "20"
+          MIN_VOLUME:        "100000"
         run: python stock_monitor.py
 
       - name: Commit & push updated data
