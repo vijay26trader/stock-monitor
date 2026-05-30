@@ -416,9 +416,22 @@ def main():
         "results":   sorted(results, key=lambda r: (r["date"], r["symbol"])),
     }
 
+    print(f"\n  DEBUG: results list has {len(results)} item(s) before save")
+    print(f"  DEBUG: writing to {OUTPUT_FILE}")
+
     os.makedirs("docs/data", exist_ok=True)
-    with open(OUTPUT_FILE, "w") as f:
-        json.dump(output, f, indent=2)
+    try:
+        with open(OUTPUT_FILE, "w") as f:
+            json.dump(output, f, indent=2)
+        print(f"  DEBUG: file written successfully")
+        # Verify by reading back
+        with open(OUTPUT_FILE) as f:
+            written = json.load(f)
+        print(f"  DEBUG: verified — results in file: {len(written.get('results', []))}")
+    except Exception as e:
+        print(f"  ERROR writing JSON: {e}")
+        import traceback; traceback.print_exc()
+        raise
 
     print(f"\n{'=' * 60}")
     print(f"  Backtest complete")
