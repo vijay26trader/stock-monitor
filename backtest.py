@@ -97,7 +97,7 @@ if _watch:
 else:
     # No watchlist passed — build dynamically from Alpaca
     print("No watchlist provided — building dynamic watchlist from Alpaca...")
-    from build_watchlist import build, get_snapshots_batch, get_all_assets
+    from build_watchlist import build
     WATCHLIST = build()
     if not WATCHLIST:
         print("ERROR: Dynamic watchlist is empty — check filters or API keys")

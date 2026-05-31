@@ -59,42 +59,60 @@ def get_all_assets():
 
 def get_snapshots_batch(symbols):
     """
-    Fetch latest snapshot (prev close, avg volume) for a batch of symbols.
-    Alpaca snapshots endpoint accepts up to 1000 symbols at once.
+    Fetch previous day's close price and volume for each symbol
+    using Alpaca's /v2/stocks/bars endpoint (latest bar per symbol).
+    Falls back gracefully per batch — 403 means no access to that feed.
     Returns dict: { symbol: {price, volume} }
     """
     results = {}
-    batch_size = 1000
+    batch_size = 200   # smaller batches — bars endpoint is more stable
+
+    from datetime import date, timedelta
+    # Use last weekday as the reference date for daily bars
+    ref = date.today()
+    for _ in range(7):
+        if ref.weekday() < 5:
+            break
+        ref -= timedelta(days=1)
+    start = (ref - timedelta(days=5)).strftime("%Y-%m-%d")
+    end   = ref.strftime("%Y-%m-%d")
 
     for i in range(0, len(symbols), batch_size):
         batch = symbols[i:i+batch_size]
-        url   = f"{ALPACA_BASE}/stocks/snapshots"
+        url   = f"{ALPACA_BASE}/stocks/bars"
         params = {
-            "symbols": ",".join(batch),
-            "feed":    "sip",
+            "symbols":   ",".join(batch),
+            "timeframe": "1Day",
+            "start":     start,
+            "end":       end,
+            "feed":      "sip",
+            "limit":     5,    # just last few daily bars per symbol
         }
         try:
             resp = requests.get(url, headers=alpaca_headers(), params=params, timeout=60)
+            if resp.status_code == 403:
+                # Try iex feed as fallback
+                params["feed"] = "iex"
+                resp = requests.get(url, headers=alpaca_headers(), params=params, timeout=60)
             if resp.status_code != 200:
-                print(f"  Snapshot batch {i//batch_size+1} failed: HTTP {resp.status_code}")
+                print(f"  Batch {i//batch_size+1} failed: HTTP {resp.status_code}")
                 continue
 
-            data = resp.json()
-            for sym, snap in data.items():
-                try:
-                    # Use previous daily bar for price/volume filter
-                    daily = snap.get("prevDailyBar") or snap.get("dailyBar") or {}
-                    price  = float(daily.get("c", 0))    # previous close
-                    volume = float(daily.get("v", 0))    # previous day volume
-                    if price > 0:
-                        results[sym] = {"price": price, "volume": volume}
-                except Exception:
+            data = resp.json().get("bars", {}) or {}
+            for sym, bars in data.items():
+                if not bars:
                     continue
+                # Use the most recent bar
+                latest = bars[-1]
+                price  = float(latest.get("c", 0))   # close price
+                volume = float(latest.get("v", 0))   # volume
+                if price > 0:
+                    results[sym] = {"price": round(price, 2), "volume": int(volume)}
 
-            print(f"  Snapshot batch {i//batch_size+1}: {len(data)} symbols returned")
+            print(f"  Batch {i//batch_size+1}/{(len(symbols)-1)//batch_size+1}: {len(data)} symbols returned")
 
         except Exception as e:
-            print(f"  Snapshot batch error: {e}")
+            print(f"  Batch {i//batch_size+1} error: {e}")
             continue
 
     return results
