@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-30 20:47 UTC",
+  "generated_at": "2026-05-31 11:07 UTC",
   "start_date": "2026-05-22",
   "end_date": "2026-05-22",
   "data_source": "Alpaca Markets (SIP/IEX feed)",
@@ -10,22 +10,37 @@
     "reversal_threshold": 2.0
   },
   "watchlist": [
-    "AAPL",
-    "MSFT",
-    "GOOGL",
-    "TSLA",
-    "AMZN",
-    "NVDA",
-    "META",
-    "SPY",
-    "QQQ",
-    "AMD"
+    "PCLA"
   ],
   "summary": {
     "total_days": 1,
-    "total_reversals": 0,
+    "total_reversals": 1,
     "total_momentum": 0,
-    "by_symbol": {}
+    "by_symbol": {
+      "PCLA": {
+        "reversals": 1,
+        "momentum_only": 0,
+        "days": [
+          "2026-05-22"
+        ]
+      }
+    }
   },
-  "results": []
+  "results": [
+    {
+      "symbol": "PCLA",
+      "avg_volume": null,
+      "baseline_price": 7.04,
+      "baseline_time": "04:00",
+      "momentum_pct": 26.42,
+      "momentum_time": "04:05",
+      "peak_price": 8.9,
+      "peak_time": "04:05",
+      "reversal_price": 8.39,
+      "reversal_time": "04:06",
+      "reversal_pct": 5.73,
+      "status": "REVERSED",
+      "date": "2026-05-22"
+    }
+  ]
 }
