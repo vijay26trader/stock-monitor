@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-31 11:35 UTC",
-  "start_date": "2026-05-22",
-  "end_date": "2026-05-22",
+  "generated_at": "2026-05-31 11:42 UTC",
+  "start_date": "2026-05-26",
+  "end_date": "2026-05-26",
   "data_source": "Alpaca Markets (SIP/IEX feed)",
   "window_config": {
     "start": "04:00 ET",
@@ -70,7 +70,7 @@
         "reversals": 1,
         "momentum_only": 0,
         "days": [
-          "2026-05-22"
+          "2026-05-26"
         ]
       }
     }
@@ -79,17 +79,17 @@
     {
       "symbol": "QTEX",
       "avg_volume": 108113885,
-      "baseline_price": 0.343,
+      "baseline_price": 0.9,
       "baseline_time": "04:00",
-      "momentum_pct": 31.2,
-      "momentum_time": "04:02",
-      "peak_price": 0.4672,
-      "peak_time": "04:03",
-      "reversal_price": 0.4451,
-      "reversal_time": "04:04",
-      "reversal_pct": 4.73,
+      "momentum_pct": 23.33,
+      "momentum_time": "04:00",
+      "peak_price": 1.17,
+      "peak_time": "04:02",
+      "reversal_price": 1.12,
+      "reversal_time": "04:03",
+      "reversal_pct": 4.27,
       "status": "REVERSED",
-      "date": "2026-05-22"
+      "date": "2026-05-26"
     }
   ]
 }
