@@ -1,0 +1,301 @@
+{
+  "generated_at": "2026-05-31 07:16 ET",
+  "filters": {
+    "price_min": 1.0,
+    "price_max": 20.0,
+    "min_volume": 100.0
+  },
+  "total": 48,
+  "symbols": [
+    "UEC",
+    "ABCL",
+    "AES",
+    "AAPD",
+    "GDRX",
+    "GOOS",
+    "AEMD",
+    "ACGC",
+    "ADUR",
+    "GDOT",
+    "ATPC",
+    "NFBK",
+    "BLOX",
+    "BGLC",
+    "AIFF",
+    "ABLV",
+    "ACOG",
+    "ALOT",
+    "ABVC",
+    "AGMB",
+    "UDN",
+    "AIRI",
+    "AFB",
+    "AQB",
+    "ACXP",
+    "AUST",
+    "ACGLN",
+    "AACPU",
+    "SOJE",
+    "AZI",
+    "AEAQU",
+    "BDSX",
+    "HYNE",
+    "AIZN",
+    "ACCS",
+    "BGIN",
+    "EEIQ",
+    "AEMS",
+    "AAME",
+    "EEA",
+    "ADAMZ",
+    "ADSE",
+    "BVC",
+    "ITHA",
+    "AACB",
+    "ACAA",
+    "AACOU",
+    "ABXB"
+  ],
+  "details": [
+    {
+      "symbol": "UEC",
+      "price": 13.51,
+      "volume": 9439151
+    },
+    {
+      "symbol": "ABCL",
+      "price": 5.29,
+      "volume": 8717725
+    },
+    {
+      "symbol": "AES",
+      "price": 14.67,
+      "volume": 8424767
+    },
+    {
+      "symbol": "AAPD",
+      "price": 11.37,
+      "volume": 4654106
+    },
+    {
+      "symbol": "GDRX",
+      "price": 2.78,
+      "volume": 3245192
+    },
+    {
+      "symbol": "GOOS",
+      "price": 10.16,
+      "volume": 924046
+    },
+    {
+      "symbol": "AEMD",
+      "price": 2.21,
+      "volume": 885006
+    },
+    {
+      "symbol": "ACGC",
+      "price": 9.93,
+      "volume": 768524
+    },
+    {
+      "symbol": "ADUR",
+      "price": 15.18,
+      "volume": 499337
+    },
+    {
+      "symbol": "GDOT",
+      "price": 12.84,
+      "volume": 390960
+    },
+    {
+      "symbol": "ATPC",
+      "price": 3.01,
+      "volume": 296640
+    },
+    {
+      "symbol": "NFBK",
+      "price": 14.29,
+      "volume": 295413
+    },
+    {
+      "symbol": "BLOX",
+      "price": 17.75,
+      "volume": 235048
+    },
+    {
+      "symbol": "BGLC",
+      "price": 2.32,
+      "volume": 218084
+    },
+    {
+      "symbol": "AIFF",
+      "price": 1.69,
+      "volume": 181529
+    },
+    {
+      "symbol": "ABLV",
+      "price": 1.01,
+      "volume": 130889
+    },
+    {
+      "symbol": "ACOG",
+      "price": 6.19,
+      "volume": 113428
+    },
+    {
+      "symbol": "ALOT",
+      "price": 15.62,
+      "volume": 95959
+    },
+    {
+      "symbol": "ABVC",
+      "price": 1.41,
+      "volume": 91396
+    },
+    {
+      "symbol": "AGMB",
+      "price": 11.05,
+      "volume": 87438
+    },
+    {
+      "symbol": "UDN",
+      "price": 18.25,
+      "volume": 80199
+    },
+    {
+      "symbol": "AIRI",
+      "price": 3.05,
+      "volume": 72277
+    },
+    {
+      "symbol": "AFB",
+      "price": 11.02,
+      "volume": 67862
+    },
+    {
+      "symbol": "AQB",
+      "price": 1.04,
+      "volume": 65378
+    },
+    {
+      "symbol": "ACXP",
+      "price": 1.98,
+      "volume": 62205
+    },
+    {
+      "symbol": "AUST",
+      "price": 1.32,
+      "volume": 60711
+    },
+    {
+      "symbol": "ACGLN",
+      "price": 16.52,
+      "volume": 56297
+    },
+    {
+      "symbol": "AACPU",
+      "price": 10.27,
+      "volume": 48325
+    },
+    {
+      "symbol": "SOJE",
+      "price": 16.98,
+      "volume": 46257
+    },
+    {
+      "symbol": "AZI",
+      "price": 1.15,
+      "volume": 44851
+    },
+    {
+      "symbol": "AEAQU",
+      "price": 10.15,
+      "volume": 40319
+    },
+    {
+      "symbol": "BDSX",
+      "price": 14.81,
+      "volume": 29989
+    },
+    {
+      "symbol": "HYNE",
+      "price": 15.75,
+      "volume": 23028
+    },
+    {
+      "symbol": "AIZN",
+      "price": 19.41,
+      "volume": 21654
+    },
+    {
+      "symbol": "ACCS",
+      "price": 6.46,
+      "volume": 16604
+    },
+    {
+      "symbol": "BGIN",
+      "price": 3.34,
+      "volume": 13931
+    },
+    {
+      "symbol": "EEIQ",
+      "price": 2.68,
+      "volume": 12486
+    },
+    {
+      "symbol": "AEMS",
+      "price": 11.8,
+      "volume": 10927
+    },
+    {
+      "symbol": "AAME",
+      "price": 2.16,
+      "volume": 7908
+    },
+    {
+      "symbol": "EEA",
+      "price": 10.73,
+      "volume": 7506
+    },
+    {
+      "symbol": "ADAMZ",
+      "price": 18.11,
+      "volume": 7248
+    },
+    {
+      "symbol": "ADSE",
+      "price": 11.87,
+      "volume": 5112
+    },
+    {
+      "symbol": "BVC",
+      "price": 9.71,
+      "volume": 3717
+    },
+    {
+      "symbol": "ITHA",
+      "price": 9.94,
+      "volume": 2616
+    },
+    {
+      "symbol": "AACB",
+      "price": 10.46,
+      "volume": 1184
+    },
+    {
+      "symbol": "ACAA",
+      "price": 9.92,
+      "volume": 303
+    },
+    {
+      "symbol": "AACOU",
+      "price": 10.0,
+      "volume": 300
+    },
+    {
+      "symbol": "ABXB",
+      "price": 19.57,
+      "volume": 272
+    }
+  ]
+}
