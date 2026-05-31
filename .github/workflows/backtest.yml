@@ -20,19 +20,27 @@ on:
         required: false
         default: '05:00'
       watchlist:
-        description: 'Stocks — comma separated (e.g. PCLA,AAPL). Leave blank to auto-scan $1–$20 universe'
+        description: 'Stocks — comma separated (e.g. PCLA,AAPL). Leave blank to auto-build'
         required: false
         default: ''
+      watchlist_mode:
+        description: 'How to build watchlist when blank: top_movers (recommended) or price_range'
+        required: false
+        default: 'top_movers'
+      top_n:
+        description: 'Top N stocks from screener (used when watchlist_mode=top_movers)'
+        required: false
+        default: '50'
       price_min:
-        description: 'Min stock price $ (used when watchlist is blank)'
+        description: 'Min stock price $ (used for price filter)'
         required: false
         default: '1'
       price_max:
-        description: 'Max stock price $ (used when watchlist is blank)'
+        description: 'Max stock price $ (used for price filter)'
         required: false
         default: '20'
       min_volume:
-        description: 'Min avg daily volume (used when watchlist is blank)'
+        description: 'Min avg daily volume (used when watchlist_mode=price_range)'
         required: false
         default: '100000'
       momentum_threshold:
@@ -69,6 +77,8 @@ jobs:
           WINDOW_START:       ${{ github.event.inputs.window_start }}
           WINDOW_END:         ${{ github.event.inputs.window_end }}
           WATCHLIST:          ${{ github.event.inputs.watchlist }}
+          WATCHLIST_MODE:     ${{ github.event.inputs.watchlist_mode }}
+          TOP_N:              ${{ github.event.inputs.top_n }}
           PRICE_MIN:          ${{ github.event.inputs.price_min }}
           PRICE_MAX:          ${{ github.event.inputs.price_max }}
           MIN_VOLUME:         ${{ github.event.inputs.min_volume }}

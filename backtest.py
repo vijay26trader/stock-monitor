@@ -92,23 +92,41 @@ END_DATE   = parse_date(_end)   if _end   else today - timedelta(days=1)
 
 WATCHLIST_DETAILS = {}   # symbol -> {price, volume} from snapshot
 
+# WATCHLIST_MODE controls how the watchlist is built when no symbols are passed:
+#   top_movers  — Alpaca screener: top gainers + most actives (recommended)
+#   price_range — All US stocks filtered by price $1-$20 and volume >100K
+_mode = os.environ.get("WATCHLIST_MODE", "top_movers").strip().lower()
+
 if _watch:
     WATCHLIST = parse_watchlist(_watch)
-else:
-    # No watchlist passed — build dynamically from Alpaca
-    print("No watchlist provided — building dynamic watchlist from Alpaca...")
+    print(f"Using provided watchlist: {WATCHLIST}")
+elif _mode == "price_range":
+    print("No watchlist provided — building from price range filter...")
     from build_watchlist import build
     WATCHLIST = build()
     if not WATCHLIST:
         print("ERROR: Dynamic watchlist is empty — check filters or API keys")
         exit(1)
-    # Load volume details from saved watchlist.json
     wl_file = "docs/data/watchlist.json"
     if os.path.exists(wl_file):
         with open(wl_file) as f:
             wl_data = json.load(f)
         WATCHLIST_DETAILS = {d["symbol"]: d for d in wl_data.get("details", [])}
-    print(f"Dynamic watchlist: {len(WATCHLIST)} stocks\n")
+    print(f"Price-range watchlist: {len(WATCHLIST)} stocks\n")
+else:
+    # Default: top movers from Alpaca screener
+    print("No watchlist provided — fetching top momentum stocks from Alpaca Screener...")
+    from get_top_movers import build_top_movers_watchlist
+    WATCHLIST = build_top_movers_watchlist()
+    if not WATCHLIST:
+        print("ERROR: Top movers watchlist is empty — check API keys or Alpaca tier")
+        exit(1)
+    wl_file = "docs/data/watchlist.json"
+    if os.path.exists(wl_file):
+        with open(wl_file) as f:
+            wl_data = json.load(f)
+        WATCHLIST_DETAILS = {d["symbol"]: d for d in wl_data.get("details", [])}
+    print(f"Top movers watchlist: {len(WATCHLIST)} stocks\n")
 
 MOMENTUM_THRESHOLD_PCT = parse_float(_momentum, 20.0) if _momentum else 20.0
 REVERSAL_THRESHOLD_PCT = parse_float(_reversal,  2.0) if _reversal else  2.0

@@ -284,18 +284,26 @@ def run():
     today  = now.strftime("%Y-%m-%d")
 
     # Build or reload watchlist once per day
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
     _watch_env = os.environ.get("WATCHLIST", "")
+    _mode      = os.environ.get("WATCHLIST_MODE", "top_movers").strip().lower()
+
     if _watch_env:
         WATCHLIST = [s.strip().upper() for s in _watch_env.split(",") if s.strip()]
         print(f"Using env watchlist: {len(WATCHLIST)} stocks")
     elif not WATCHLIST or data.get("last_scan_date") != today:
-        print("Building dynamic watchlist (price $1-$20, vol >100K)...")
-        import sys
-        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-        from build_watchlist import build
-        WATCHLIST = build()
+        if _mode == "price_range":
+            print("Building watchlist from price range ($1-$20, vol >100K)...")
+            from build_watchlist import build
+            WATCHLIST = build()
+        else:
+            print("Fetching top momentum stocks from Alpaca Screener...")
+            from get_top_movers import build_top_movers_watchlist
+            WATCHLIST = build_top_movers_watchlist()
         if not WATCHLIST:
-            print("ERROR: Dynamic watchlist is empty — check filters or API keys")
+            print("ERROR: Watchlist is empty — check filters or API keys")
             return
 
     # Reset on new day

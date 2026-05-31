@@ -41,6 +41,8 @@ jobs:
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
           WINDOW_START:      ${{ github.event.inputs.window_start || '04:00' }}
           WINDOW_END:        ${{ github.event.inputs.window_end   || '05:00' }}
+          WATCHLIST_MODE:    "top_movers"
+          TOP_N:             "50"
           PRICE_MIN:         "1"
           PRICE_MAX:         "20"
           MIN_VOLUME:        "100000"
