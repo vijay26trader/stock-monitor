@@ -83,7 +83,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           echo "=== backtest.json content preview ==="
-          cat docs/data/backtest.json | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'results count: {len(d["results"])}, summary: {d["summary"]}')"
+          python3 -c "import json; d=json.load(open('docs/data/backtest.json')); print('results count:', len(d.get('results',[])), '| summary:', d.get('summary'))"
           git add docs/data/backtest.json
           git add docs/data/watchlist.json 2>/dev/null || true
           git status
