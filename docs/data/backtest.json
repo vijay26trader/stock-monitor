@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-31 11:42 UTC",
-  "start_date": "2026-05-26",
-  "end_date": "2026-05-26",
+  "generated_at": "2026-06-01 09:05 UTC",
+  "start_date": "2026-06-01",
+  "end_date": "2026-06-01",
   "data_source": "Alpaca Markets (SIP/IEX feed)",
   "window_config": {
     "start": "04:00 ET",
@@ -10,86 +10,13 @@
     "reversal_threshold": 2.0
   },
   "watchlist": [
-    "HUBC",
-    "DEVS",
-    "SOXS",
-    "NVDA",
-    "TZA",
-    "INTC",
-    "SPCE",
-    "ZCMD",
-    "F",
-    "SOFI",
-    "ONDS",
-    "BMNU",
-    "BITO",
-    "NOK",
-    "QTEX",
-    "BBAI",
-    "SNAP",
-    "YMM",
-    "SMCI",
-    "PLTR",
-    "NU",
-    "T",
-    "HPE",
-    "MSFT",
-    "WOK",
-    "AAL",
-    "PRZO",
-    "AAPL",
-    "NOW",
-    "PLUG",
-    "TSLL",
-    "TQQQ",
-    "PINS",
-    "NEXR",
-    "GPUS",
-    "PATH",
-    "RDW",
-    "HOOD",
-    "DOC",
-    "RGTI",
-    "MU",
-    "ADTX",
-    "RIVN",
-    "HPQ",
-    "BAC",
-    "PRFX",
-    "ACHR",
-    "MEHA",
-    "SPY",
-    "ASTS"
+    "MUU"
   ],
   "summary": {
     "total_days": 1,
-    "total_reversals": 1,
+    "total_reversals": 0,
     "total_momentum": 0,
-    "by_symbol": {
-      "QTEX": {
-        "reversals": 1,
-        "momentum_only": 0,
-        "days": [
-          "2026-05-26"
-        ]
-      }
-    }
+    "by_symbol": {}
   },
-  "results": [
-    {
-      "symbol": "QTEX",
-      "avg_volume": 108113885,
-      "baseline_price": 0.9,
-      "baseline_time": "04:00",
-      "momentum_pct": 23.33,
-      "momentum_time": "04:00",
-      "peak_price": 1.17,
-      "peak_time": "04:02",
-      "reversal_price": 1.12,
-      "reversal_time": "04:03",
-      "reversal_pct": 4.27,
-      "status": "REVERSED",
-      "date": "2026-05-26"
-    }
-  ]
+  "results": []
 }
