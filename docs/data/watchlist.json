@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-02 15:58 ET",
+  "generated_at": "2026-06-03 16:29 ET",
   "method": "top_movers_screener",
   "filters": {
     "price_min": 1.0,
@@ -8,108 +8,72 @@
   },
   "total": 50,
   "symbols": [
+    "SOXS",
+    "SBEV",
+    "TZA",
+    "ZCMD",
+    "BITO",
     "PMI",
     "HUBC",
-    "SOXS",
-    "GPUS",
     "LASE",
-    "BITO",
-    "TZA",
-    "NU",
-    "NVDA",
-    "HPE",
-    "SOAR",
-    "DEVS",
-    "BMNU",
-    "SPCE",
-    "NOK",
-    "ZCMD",
-    "MEHA",
-    "GXAI",
+    "SELX",
     "WOK",
-    "MRVL",
+    "NVDA",
+    "NOK",
     "INTC",
+    "NU",
+    "MRVL",
+    "NVTS",
+    "SOAR",
+    "XOS",
+    "BMNU",
     "ONDS",
-    "LOBO",
-    "PLUG",
-    "BJDX",
-    "DXST",
-    "SOFI",
-    "AMZE",
-    "RGTI",
-    "IBIT",
-    "JZ",
-    "MSTU",
-    "TSLL",
-    "F",
-    "SMR",
-    "PATH",
-    "OPEN",
-    "SMCI",
-    "NVD",
-    "HIVE",
     "BB",
+    "WCT",
+    "RGTI",
+    "SOFI",
+    "PLUG",
     "AAL",
-    "ACHR",
-    "BBAI",
-    "QBTS",
+    "SQQQ",
+    "TSLL",
+    "BURU",
     "TQQQ",
-    "KEEL",
-    "AMC",
-    "URG",
-    "YYGH"
+    "IREN",
+    "F",
+    "DEVS",
+    "DBGI",
+    "HPE",
+    "SPCE",
+    "POET",
+    "GRAB",
+    "AMZE",
+    "GOOGL",
+    "SMR",
+    "SDOT",
+    "T",
+    "ACHR",
+    "RIVN",
+    "BBAI",
+    "AMZN",
+    "IBIT",
+    "AAPL",
+    "NVD"
   ],
   "details": [
-    {
-      "symbol": "PMI",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 803033741,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "HUBC",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 521013495,
-      "sources": [
-        "most_active"
-      ]
-    },
     {
       "symbol": "SOXS",
       "price": 0,
       "change_pct": 0,
-      "volume": 440939110,
+      "volume": 570856406,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "GPUS",
+      "symbol": "SBEV",
       "price": 0,
       "change_pct": 0,
-      "volume": 290119365,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "LASE",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 242930762,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "BITO",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 237974947,
+      "volume": 486894719,
       "sources": [
         "most_active"
       ]
@@ -118,79 +82,7 @@
       "symbol": "TZA",
       "price": 0,
       "change_pct": 0,
-      "volume": 175643667,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "NU",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 168337539,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "NVDA",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 162860676,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "HPE",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 145397474,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "SOAR",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 142733295,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "DEVS",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 141699167,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "BMNU",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 126625802,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "SPCE",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 123489368,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "NOK",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 121770823,
+      "volume": 263182044,
       "sources": [
         "most_active"
       ]
@@ -199,25 +91,52 @@
       "symbol": "ZCMD",
       "price": 0,
       "change_pct": 0,
-      "volume": 119539979,
+      "volume": 256540116,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "MEHA",
+      "symbol": "BITO",
       "price": 0,
       "change_pct": 0,
-      "volume": 111686292,
+      "volume": 238704007,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "GXAI",
+      "symbol": "PMI",
       "price": 0,
       "change_pct": 0,
-      "volume": 104772120,
+      "volume": 233357237,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "HUBC",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 225552858,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "LASE",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 224940014,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "SELX",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 180202011,
       "sources": [
         "most_active"
       ]
@@ -226,16 +145,25 @@
       "symbol": "WOK",
       "price": 0,
       "change_pct": 0,
-      "volume": 100275239,
+      "volume": 174219730,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "MRVL",
+      "symbol": "NVDA",
       "price": 0,
       "change_pct": 0,
-      "volume": 91644785,
+      "volume": 155768436,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "NOK",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 143650945,
       "sources": [
         "most_active"
       ]
@@ -244,7 +172,61 @@
       "symbol": "INTC",
       "price": 0,
       "change_pct": 0,
-      "volume": 90698007,
+      "volume": 116833044,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "NU",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 111356826,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "MRVL",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 111051140,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "NVTS",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 110966246,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "SOAR",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 104847735,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "XOS",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 101238252,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "BMNU",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 98614307,
       "sources": [
         "most_active"
       ]
@@ -253,169 +235,7 @@
       "symbol": "ONDS",
       "price": 0,
       "change_pct": 0,
-      "volume": 82698182,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "LOBO",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 81558824,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "PLUG",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 77463323,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "BJDX",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 73724443,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "DXST",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 73367153,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "SOFI",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 71673361,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "AMZE",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 69413619,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "RGTI",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 66908187,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "IBIT",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 66576712,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "JZ",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 62533890,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "MSTU",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 61453559,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "TSLL",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 59685212,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "F",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 59185829,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "SMR",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 59068597,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "PATH",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 57084365,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "OPEN",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 53526410,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "SMCI",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 50864921,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "NVD",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 49792276,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "HIVE",
-      "price": 0,
-      "change_pct": 0,
-      "volume": 47849729,
+      "volume": 92987892,
       "sources": [
         "most_active"
       ]
@@ -424,7 +244,43 @@
       "symbol": "BB",
       "price": 0,
       "change_pct": 0,
-      "volume": 46644046,
+      "volume": 87075815,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "WCT",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 84522767,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "RGTI",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 77164336,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "SOFI",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 72721445,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "PLUG",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 72208724,
       "sources": [
         "most_active"
       ]
@@ -433,34 +289,34 @@
       "symbol": "AAL",
       "price": 0,
       "change_pct": 0,
-      "volume": 46119573,
+      "volume": 71553470,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "ACHR",
+      "symbol": "SQQQ",
       "price": 0,
       "change_pct": 0,
-      "volume": 46007488,
+      "volume": 69645205,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "BBAI",
+      "symbol": "TSLL",
       "price": 0,
       "change_pct": 0,
-      "volume": 45817198,
+      "volume": 65489558,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "QBTS",
+      "symbol": "BURU",
       "price": 0,
       "change_pct": 0,
-      "volume": 45764590,
+      "volume": 59925152,
       "sources": [
         "most_active"
       ]
@@ -469,43 +325,187 @@
       "symbol": "TQQQ",
       "price": 0,
       "change_pct": 0,
-      "volume": 44949471,
+      "volume": 59038940,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "KEEL",
+      "symbol": "IREN",
       "price": 0,
       "change_pct": 0,
-      "volume": 44170336,
+      "volume": 58513149,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "AMC",
+      "symbol": "F",
       "price": 0,
       "change_pct": 0,
-      "volume": 43246159,
+      "volume": 58171221,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "URG",
+      "symbol": "DEVS",
       "price": 0,
       "change_pct": 0,
-      "volume": 42764181,
+      "volume": 58095402,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "YYGH",
+      "symbol": "DBGI",
       "price": 0,
       "change_pct": 0,
-      "volume": 42665425,
+      "volume": 57067929,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "HPE",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 55743135,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "SPCE",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 54915698,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "POET",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 54878756,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "GRAB",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 53304662,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "AMZE",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 53187561,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "GOOGL",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 53021667,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "SMR",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 52187333,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "SDOT",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 51838848,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "T",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 51645555,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "ACHR",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 51475028,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "RIVN",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 51391774,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "BBAI",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 51326080,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "AMZN",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 50800169,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "IBIT",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 50780694,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "AAPL",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 50481662,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "NVD",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 49893287,
       "sources": [
         "most_active"
       ]
