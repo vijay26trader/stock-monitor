@@ -1,301 +1,514 @@
 {
-  "generated_at": "2026-05-31 07:16 ET",
+  "generated_at": "2026-06-06 06:26 ET",
+  "method": "top_movers_screener",
   "filters": {
     "price_min": 1.0,
     "price_max": 20.0,
-    "min_volume": 100.0
+    "top_n": 50
   },
-  "total": 48,
+  "total": 50,
   "symbols": [
-    "UEC",
-    "ABCL",
-    "AES",
-    "AAPD",
-    "GDRX",
-    "GOOS",
-    "AEMD",
-    "ACGC",
-    "ADUR",
-    "GDOT",
-    "ATPC",
-    "NFBK",
-    "BLOX",
-    "BGLC",
-    "AIFF",
-    "ABLV",
-    "ACOG",
-    "ALOT",
-    "ABVC",
-    "AGMB",
-    "UDN",
-    "AIRI",
-    "AFB",
-    "AQB",
-    "ACXP",
-    "AUST",
-    "ACGLN",
-    "AACPU",
-    "SOJE",
-    "AZI",
-    "AEAQU",
-    "BDSX",
-    "HYNE",
-    "AIZN",
-    "ACCS",
-    "BGIN",
-    "EEIQ",
-    "AEMS",
-    "AAME",
-    "EEA",
-    "ADAMZ",
-    "ADSE",
-    "BVC",
-    "ITHA",
-    "AACB",
-    "ACAA",
-    "AACOU",
-    "ABXB"
+    "NOTV",
+    "SOXS",
+    "TZA",
+    "SNBR",
+    "BITO",
+    "SMTK",
+    "NVDA",
+    "RMSG",
+    "NOK",
+    "BMNU",
+    "BCDA",
+    "ZCMD",
+    "INTC",
+    "TQQQ",
+    "KEEL",
+    "SQQQ",
+    "IBIT",
+    "SOXL",
+    "AAL",
+    "BGMS",
+    "QQQ",
+    "SPY",
+    "MRVL",
+    "SCAG",
+    "HUBC",
+    "CXAI",
+    "ETHA",
+    "SOFI",
+    "TSLL",
+    "PLUG",
+    "UVIX",
+    "DRAM",
+    "MU",
+    "MSTU",
+    "YYGH",
+    "DEVS",
+    "BB",
+    "VVOS",
+    "WOK",
+    "SRXH",
+    "AAPL",
+    "F",
+    "IREN",
+    "ONDS",
+    "TSLA",
+    "BMNR",
+    "T",
+    "POET",
+    "NVD",
+    "EEM"
   ],
   "details": [
     {
-      "symbol": "UEC",
-      "price": 13.51,
-      "volume": 9439151
+      "symbol": "NOTV",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 1066641430,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ABCL",
-      "price": 5.29,
-      "volume": 8717725
+      "symbol": "SOXS",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 972330842,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AES",
-      "price": 14.67,
-      "volume": 8424767
+      "symbol": "TZA",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 378190175,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AAPD",
-      "price": 11.37,
-      "volume": 4654106
+      "symbol": "SNBR",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 305118924,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "GDRX",
-      "price": 2.78,
-      "volume": 3245192
+      "symbol": "BITO",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 278662118,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "GOOS",
-      "price": 10.16,
-      "volume": 924046
+      "symbol": "SMTK",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 232133365,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AEMD",
-      "price": 2.21,
-      "volume": 885006
+      "symbol": "NVDA",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 220589583,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ACGC",
-      "price": 9.93,
-      "volume": 768524
+      "symbol": "RMSG",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 199936737,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ADUR",
-      "price": 15.18,
-      "volume": 499337
+      "symbol": "NOK",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 185173608,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "GDOT",
-      "price": 12.84,
-      "volume": 390960
+      "symbol": "BMNU",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 184415774,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ATPC",
-      "price": 3.01,
-      "volume": 296640
+      "symbol": "BCDA",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 151134976,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "NFBK",
-      "price": 14.29,
-      "volume": 295413
+      "symbol": "ZCMD",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 150073985,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "BLOX",
-      "price": 17.75,
-      "volume": 235048
+      "symbol": "INTC",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 145240355,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "BGLC",
-      "price": 2.32,
-      "volume": 218084
+      "symbol": "TQQQ",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 118944063,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AIFF",
-      "price": 1.69,
-      "volume": 181529
+      "symbol": "KEEL",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 114113185,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ABLV",
-      "price": 1.01,
-      "volume": 130889
+      "symbol": "SQQQ",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 112552130,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ACOG",
-      "price": 6.19,
-      "volume": 113428
+      "symbol": "IBIT",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 111715106,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ALOT",
-      "price": 15.62,
-      "volume": 95959
+      "symbol": "SOXL",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 108317070,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ABVC",
-      "price": 1.41,
-      "volume": 91396
+      "symbol": "AAL",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 106125108,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AGMB",
-      "price": 11.05,
-      "volume": 87438
+      "symbol": "BGMS",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 105298168,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "UDN",
-      "price": 18.25,
-      "volume": 80199
+      "symbol": "QQQ",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 100535674,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AIRI",
-      "price": 3.05,
-      "volume": 72277
+      "symbol": "SPY",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 94077357,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AFB",
-      "price": 11.02,
-      "volume": 67862
+      "symbol": "MRVL",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 94022402,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AQB",
-      "price": 1.04,
-      "volume": 65378
+      "symbol": "SCAG",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 92743861,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ACXP",
-      "price": 1.98,
-      "volume": 62205
+      "symbol": "HUBC",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 85562556,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AUST",
-      "price": 1.32,
-      "volume": 60711
+      "symbol": "CXAI",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 83464932,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ACGLN",
-      "price": 16.52,
-      "volume": 56297
+      "symbol": "ETHA",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 83023230,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AACPU",
-      "price": 10.27,
-      "volume": 48325
+      "symbol": "SOFI",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 81747380,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "SOJE",
-      "price": 16.98,
-      "volume": 46257
+      "symbol": "TSLL",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 80380006,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AZI",
-      "price": 1.15,
-      "volume": 44851
+      "symbol": "PLUG",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 79426240,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AEAQU",
-      "price": 10.15,
-      "volume": 40319
+      "symbol": "UVIX",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 78957467,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "BDSX",
-      "price": 14.81,
-      "volume": 29989
+      "symbol": "DRAM",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 77686667,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "HYNE",
-      "price": 15.75,
-      "volume": 23028
+      "symbol": "MU",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 77400697,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AIZN",
-      "price": 19.41,
-      "volume": 21654
+      "symbol": "MSTU",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 76665893,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ACCS",
-      "price": 6.46,
-      "volume": 16604
+      "symbol": "YYGH",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 74810770,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "BGIN",
-      "price": 3.34,
-      "volume": 13931
+      "symbol": "DEVS",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 71734639,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "EEIQ",
-      "price": 2.68,
-      "volume": 12486
+      "symbol": "BB",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 70452646,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AEMS",
-      "price": 11.8,
-      "volume": 10927
+      "symbol": "VVOS",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 70273635,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AAME",
-      "price": 2.16,
-      "volume": 7908
+      "symbol": "WOK",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 69250901,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "EEA",
-      "price": 10.73,
-      "volume": 7506
+      "symbol": "SRXH",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 69122360,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ADAMZ",
-      "price": 18.11,
-      "volume": 7248
+      "symbol": "AAPL",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 66293024,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ADSE",
-      "price": 11.87,
-      "volume": 5112
+      "symbol": "F",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 65370942,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "BVC",
-      "price": 9.71,
-      "volume": 3717
+      "symbol": "IREN",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 64166461,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ITHA",
-      "price": 9.94,
-      "volume": 2616
+      "symbol": "ONDS",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 63879708,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AACB",
-      "price": 10.46,
-      "volume": 1184
+      "symbol": "TSLA",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 63805722,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ACAA",
-      "price": 9.92,
-      "volume": 303
+      "symbol": "BMNR",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 63156680,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "AACOU",
-      "price": 10.0,
-      "volume": 300
+      "symbol": "T",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 62986697,
+      "sources": [
+        "most_active"
+      ]
     },
     {
-      "symbol": "ABXB",
-      "price": 19.57,
-      "volume": 272
+      "symbol": "POET",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 57198085,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "NVD",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 56795512,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "EEM",
+      "price": 0,
+      "change_pct": 0,
+      "volume": 56185069,
+      "sources": [
+        "most_active"
+      ]
     }
   ]
 }
