@@ -86,6 +86,21 @@ td.date{color:var(--muted)}
 .empty-title{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
 .empty-desc{font-size:.75rem;color:var(--muted);line-height:1.6}
 
+/* run panel */
+.run-panel{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:1.4rem 1.6rem;margin-bottom:2rem}
+.run-panel h2{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:1.2rem}
+.run-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:1.2rem}
+.run-field label{display:block;font-size:.63rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-family:'JetBrains Mono',monospace;margin-bottom:4px}
+.run-field input,.run-field select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:7px 10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:.8rem;outline:none;transition:border-color .2s}
+.run-field input:focus,.run-field select:focus{border-color:var(--amber)}
+.run-field select option{background:var(--surface2)}
+.run-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.btn-run{display:inline-flex;align-items:center;gap:8px;padding:9px 20px;border-radius:10px;border:none;background:var(--amber);color:#000;font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;text-decoration:none;transition:opacity .2s}
+.btn-run:hover{opacity:.85}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;border:1px solid var(--border2);background:var(--surface2);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.75rem;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:var(--border);color:var(--text)}
+.saved-note{font-size:.65rem;color:var(--green);font-family:'JetBrains Mono',monospace;display:none}
+
 /* loader */
 #loader{display:flex;align-items:center;justify-content:center;height:60vh;flex-direction:column;gap:1rem}
 .spinner{width:30px;height:30px;border:2px solid var(--border2);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite}
@@ -114,6 +129,68 @@ footer p{font-size:.68rem;color:var(--muted2);font-family:'JetBrains Mono',monos
     </div>
     <a class="nav-link" href="./index.html">← Live Monitor</a>
   </header>
+
+  <!-- Run New Backtest Panel -->
+  <div class="run-panel">
+    <h2>⚡ Run New Backtest</h2>
+    <div class="run-fields">
+      <div class="run-field">
+        <label>Start Date</label>
+        <input type="date" id="f-start">
+      </div>
+      <div class="run-field">
+        <label>End Date</label>
+        <input type="date" id="f-end">
+      </div>
+      <div class="run-field">
+        <label>Window Start (ET)</label>
+        <input type="time" id="f-wstart" step="60">
+      </div>
+      <div class="run-field">
+        <label>Window End (ET)</label>
+        <input type="time" id="f-wend" step="60">
+      </div>
+      <div class="run-field">
+        <label>Stocks (blank = auto)</label>
+        <input type="text" id="f-watchlist" placeholder="e.g. PCLA,AAPL">
+      </div>
+      <div class="run-field">
+        <label>Watchlist Mode</label>
+        <select id="f-mode">
+          <option value="top_movers">Top Movers (recommended)</option>
+          <option value="price_range">Price Range Filter</option>
+        </select>
+      </div>
+      <div class="run-field">
+        <label>Top N Stocks</label>
+        <input type="number" id="f-topn" min="1" max="100">
+      </div>
+      <div class="run-field">
+        <label>Price Min ($)</label>
+        <input type="number" id="f-pmin" min="0" step="0.5">
+      </div>
+      <div class="run-field">
+        <label>Price Max ($)</label>
+        <input type="number" id="f-pmax" min="0" step="0.5">
+      </div>
+      <div class="run-field">
+        <label>Momentum %</label>
+        <input type="number" id="f-mom" min="1" step="0.5">
+      </div>
+      <div class="run-field">
+        <label>Reversal %</label>
+        <input type="number" id="f-rev" min="0.1" step="0.1">
+      </div>
+    </div>
+    <div class="run-actions">
+      <a id="btn-run" class="btn-run" href="#" target="_blank">▶ Open in GitHub Actions</a>
+      <button class="btn-secondary" onclick="resetDefaults()">↺ Reset defaults</button>
+      <span class="saved-note" id="saved-note">✓ Inputs saved</span>
+    </div>
+    <p style="font-size:.62rem;color:var(--muted2);font-family:'JetBrains Mono',monospace;margin-top:.8rem">
+      Inputs are saved in your browser automatically. Clicking the button opens GitHub Actions with your values pre-filled in the URL.
+    </p>
+  </div>
 
   <!-- Stats -->
   <div class="stats">
@@ -152,7 +229,7 @@ footer p{font-size:.68rem;color:var(--muted2);font-family:'JetBrains Mono',monos
 
   <footer>
     <p id="footer-ts">—</p>
-    <p>1-min data via Yahoo Finance · max 30 days back · Times in ET</p>
+    <p>1-min data via Alpaca Markets · max 30 days back · Times in ET</p>
   </footer>
 </div>
 
@@ -161,8 +238,111 @@ footer p{font-size:.68rem;color:var(--muted2);font-family:'JetBrains Mono',monos
 // Robust path — works regardless of repo name on GitHub Pages
 const BASE = window.location.pathname.replace(/\/[^/]*$/, '');
 const DATA = BASE + '/data/backtest.json';
+const REPO = 'vijay26trader/stock-monitor';   // ← your GitHub repo
+const WORKFLOW = 'backtest.yml';
 let allResults = [];
 let activeFilter = 'all';
+
+// ── Run panel: localStorage persistence ──────────────────────────
+
+const STORAGE_KEY = 'backtest_inputs_v1';
+
+const DEFAULTS = {
+  start:     '',
+  end:       '',
+  wstart:    '04:00',
+  wend:      '05:00',
+  watchlist: '',
+  mode:      'top_movers',
+  topn:      '50',
+  pmin:      '1',
+  pmax:      '20',
+  mom:       '20.0',
+  rev:       '2.0',
+};
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function loadInputs(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    return Object.assign({}, DEFAULTS, saved);
+  }catch(e){ return Object.assign({}, DEFAULTS); }
+}
+
+function saveInputs(){
+  const vals = readFields();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(vals));
+  const note = document.getElementById('saved-note');
+  note.style.display = 'inline';
+  setTimeout(()=>{ note.style.display='none'; }, 2000);
+}
+
+function readFields(){
+  return {
+    start:     document.getElementById('f-start').value,
+    end:       document.getElementById('f-end').value,
+    wstart:    document.getElementById('f-wstart').value,
+    wend:      document.getElementById('f-wend').value,
+    watchlist: document.getElementById('f-watchlist').value.trim(),
+    mode:      document.getElementById('f-mode').value,
+    topn:      document.getElementById('f-topn').value,
+    pmin:      document.getElementById('f-pmin').value,
+    pmax:      document.getElementById('f-pmax').value,
+    mom:       document.getElementById('f-mom').value,
+    rev:       document.getElementById('f-rev').value,
+  };
+}
+
+function fillFields(vals){
+  document.getElementById('f-start').value    = vals.start    || todayStr();
+  document.getElementById('f-end').value      = vals.end      || todayStr();
+  document.getElementById('f-wstart').value   = vals.wstart   || '04:00';
+  document.getElementById('f-wend').value     = vals.wend     || '05:00';
+  document.getElementById('f-watchlist').value= vals.watchlist|| '';
+  document.getElementById('f-mode').value     = vals.mode     || 'top_movers';
+  document.getElementById('f-topn').value     = vals.topn     || '50';
+  document.getElementById('f-pmin').value     = vals.pmin     || '1';
+  document.getElementById('f-pmax').value     = vals.pmax     || '20';
+  document.getElementById('f-mom').value      = vals.mom      || '20.0';
+  document.getElementById('f-rev').value      = vals.rev      || '2.0';
+  updateRunLink();
+}
+
+function resetDefaults(){
+  fillFields(DEFAULTS);
+  saveInputs();
+}
+
+function updateRunLink(){
+  const v = readFields();
+  // Build GitHub Actions dispatch URL with inputs pre-filled as query params
+  const params = new URLSearchParams({
+    'inputs[start_date]':         v.start,
+    'inputs[end_date]':           v.end,
+    'inputs[window_start]':       v.wstart,
+    'inputs[window_end]':         v.wend,
+    'inputs[watchlist]':          v.watchlist,
+    'inputs[watchlist_mode]':     v.mode,
+    'inputs[top_n]':              v.topn,
+    'inputs[price_min]':          v.pmin,
+    'inputs[price_max]':          v.pmax,
+    'inputs[momentum_threshold]': v.mom,
+    'inputs[reversal_threshold]': v.rev,
+  });
+  const url = `https://github.com/${REPO}/actions/workflows/${WORKFLOW}`;
+  document.getElementById('btn-run').href = url;
+}
+
+function initRunPanel(){
+  const vals = loadInputs();
+  fillFields(vals);
+  // Auto-save on any input change
+  document.querySelectorAll('.run-field input, .run-field select').forEach(el=>{
+    el.addEventListener('change', ()=>{ saveInputs(); updateRunLink(); });
+    el.addEventListener('input',  ()=>{ updateRunLink(); });
+  });
+}
 
 function $p(v){return v!=null?'$'+parseFloat(v).toFixed(2):'—'}
 function p(v,d=2){return v!=null?parseFloat(v).toFixed(d):'—'}
