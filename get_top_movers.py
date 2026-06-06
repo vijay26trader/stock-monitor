@@ -153,14 +153,52 @@ def build_top_movers_watchlist():
                 "sources":    ["most_active"],
             }
 
-    # Apply price filter (skip if price unknown i.e. 0)
+    # Fetch latest price for symbols that came only from most_actives (price=0)
+    unknown_price_syms = [sym for sym, d in merged.items() if d["price"] == 0]
+    if unknown_price_syms:
+        print(f"  Looking up prices for {len(unknown_price_syms)} most-actives symbols...")
+        from datetime import date, timedelta
+        ref = date.today()
+        for _ in range(7):
+            if ref.weekday() < 5:
+                break
+            ref -= timedelta(days=1)
+        start = (ref - timedelta(days=5)).strftime("%Y-%m-%d")
+        end   = ref.strftime("%Y-%m-%d")
+
+        batch_size = 200
+        for i in range(0, len(unknown_price_syms), batch_size):
+            batch  = unknown_price_syms[i:i+batch_size]
+            url    = f"https://data.alpaca.markets/v2/stocks/bars"
+            params = {
+                "symbols":   ",".join(batch),
+                "timeframe": "1Day",
+                "start":     start,
+                "end":       end,
+                "feed":      "sip",
+                "limit":     5,
+            }
+            try:
+                resp = requests.get(url, headers=alpaca_headers(), params=params, timeout=30)
+                if resp.status_code != 200:
+                    params["feed"] = "iex"
+                    resp = requests.get(url, headers=alpaca_headers(), params=params, timeout=30)
+                if resp.status_code == 200:
+                    bars_data = resp.json().get("bars", {}) or {}
+                    for sym, bars in bars_data.items():
+                        if bars and sym in merged:
+                            merged[sym]["price"] = round(float(bars[-1]["c"]), 2)
+            except Exception as e:
+                print(f"  Price lookup error: {e}")
+
+    # Apply price filter — now all symbols have a known price (or 0 if truly unavailable)
     filtered = []
     skipped_price = 0
     for sym, d in merged.items():
         price = d["price"]
         if price == 0:
-            # Include anyway — price unknown from actives endpoint
-            filtered.append(d)
+            # Still unknown after lookup — skip to enforce price filter strictly
+            skipped_price += 1
         elif PRICE_MIN <= price <= PRICE_MAX:
             filtered.append(d)
         else:
