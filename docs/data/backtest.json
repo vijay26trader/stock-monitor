@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-06 10:21 UTC",
-  "start_date": "2026-05-22",
-  "end_date": "2026-05-22",
+  "generated_at": "2026-06-06 10:26 UTC",
+  "start_date": "2026-06-01",
+  "end_date": "2026-06-05",
   "data_source": "Alpaca Markets (SIP/IEX feed)",
   "window_config": {
     "start": "09:00 ET",
@@ -62,10 +62,220 @@
     "EEM"
   ],
   "summary": {
-    "total_days": 1,
-    "total_reversals": 0,
+    "total_days": 5,
+    "total_reversals": 10,
     "total_momentum": 0,
-    "by_symbol": {}
+    "by_symbol": {
+      "DEVS": {
+        "reversals": 2,
+        "momentum_only": 0,
+        "days": [
+          "2026-06-01",
+          "2026-06-03"
+        ]
+      },
+      "SCAG": {
+        "reversals": 1,
+        "momentum_only": 0,
+        "days": [
+          "2026-06-02"
+        ]
+      },
+      "HUBC": {
+        "reversals": 2,
+        "momentum_only": 0,
+        "days": [
+          "2026-06-02",
+          "2026-06-04"
+        ]
+      },
+      "WOK": {
+        "reversals": 1,
+        "momentum_only": 0,
+        "days": [
+          "2026-06-03"
+        ]
+      },
+      "YYGH": {
+        "reversals": 1,
+        "momentum_only": 0,
+        "days": [
+          "2026-06-04"
+        ]
+      },
+      "NOTV": {
+        "reversals": 1,
+        "momentum_only": 0,
+        "days": [
+          "2026-06-05"
+        ]
+      },
+      "SNBR": {
+        "reversals": 1,
+        "momentum_only": 0,
+        "days": [
+          "2026-06-05"
+        ]
+      },
+      "BCDA": {
+        "reversals": 1,
+        "momentum_only": 0,
+        "days": [
+          "2026-06-05"
+        ]
+      }
+    }
   },
-  "results": []
+  "results": [
+    {
+      "symbol": "DEVS",
+      "avg_volume": 71734639,
+      "baseline_price": 0.3085,
+      "baseline_time": "09:00",
+      "momentum_pct": 21.85,
+      "momentum_time": "09:03",
+      "peak_price": 0.3872,
+      "peak_time": "09:06",
+      "reversal_price": 0.3613,
+      "reversal_time": "09:07",
+      "reversal_pct": 6.69,
+      "status": "REVERSED",
+      "date": "2026-06-01"
+    },
+    {
+      "symbol": "HUBC",
+      "avg_volume": 85562556,
+      "baseline_price": 0.4488,
+      "baseline_time": "09:00",
+      "momentum_pct": 23.93,
+      "momentum_time": "09:40",
+      "peak_price": 0.5562,
+      "peak_time": "09:40",
+      "reversal_price": 0.5369,
+      "reversal_time": "09:42",
+      "reversal_pct": 3.47,
+      "status": "REVERSED",
+      "date": "2026-06-02"
+    },
+    {
+      "symbol": "SCAG",
+      "avg_volume": 92743861,
+      "baseline_price": 0.4513,
+      "baseline_time": "09:13",
+      "momentum_pct": 23.53,
+      "momentum_time": "09:16",
+      "peak_price": 0.5575,
+      "peak_time": "09:16",
+      "reversal_price": 0.505,
+      "reversal_time": "09:18",
+      "reversal_pct": 9.42,
+      "status": "REVERSED",
+      "date": "2026-06-02"
+    },
+    {
+      "symbol": "DEVS",
+      "avg_volume": 71734639,
+      "baseline_price": 0.7329,
+      "baseline_time": "09:00",
+      "momentum_pct": 21.44,
+      "momentum_time": "09:47",
+      "peak_price": 0.892,
+      "peak_time": "09:48",
+      "reversal_price": 0.8735,
+      "reversal_time": "09:51",
+      "reversal_pct": 2.07,
+      "status": "REVERSED",
+      "date": "2026-06-03"
+    },
+    {
+      "symbol": "WOK",
+      "avg_volume": 69250901,
+      "baseline_price": 0.1,
+      "baseline_time": "09:00",
+      "momentum_pct": 23.6,
+      "momentum_time": "09:12",
+      "peak_price": 0.1319,
+      "peak_time": "09:14",
+      "reversal_price": 0.1238,
+      "reversal_time": "09:15",
+      "reversal_pct": 6.14,
+      "status": "REVERSED",
+      "date": "2026-06-03"
+    },
+    {
+      "symbol": "HUBC",
+      "avg_volume": 85562556,
+      "baseline_price": 0.2332,
+      "baseline_time": "09:00",
+      "momentum_pct": 20.88,
+      "momentum_time": "09:32",
+      "peak_price": 0.3039,
+      "peak_time": "09:33",
+      "reversal_price": 0.2717,
+      "reversal_time": "09:34",
+      "reversal_pct": 10.6,
+      "status": "REVERSED",
+      "date": "2026-06-04"
+    },
+    {
+      "symbol": "YYGH",
+      "avg_volume": 74810770,
+      "baseline_price": 0.1832,
+      "baseline_time": "09:00",
+      "momentum_pct": 22.6,
+      "momentum_time": "09:35",
+      "peak_price": 0.2472,
+      "peak_time": "09:38",
+      "reversal_price": 0.2385,
+      "reversal_time": "09:39",
+      "reversal_pct": 3.52,
+      "status": "REVERSED",
+      "date": "2026-06-04"
+    },
+    {
+      "symbol": "BCDA",
+      "avg_volume": 151134976,
+      "baseline_price": 1.22,
+      "baseline_time": "09:00",
+      "momentum_pct": 20.4,
+      "momentum_time": "09:44",
+      "peak_price": 1.4689,
+      "peak_time": "09:44",
+      "reversal_price": 1.4102,
+      "reversal_time": "09:46",
+      "reversal_pct": 4.0,
+      "status": "REVERSED",
+      "date": "2026-06-05"
+    },
+    {
+      "symbol": "NOTV",
+      "avg_volume": 1066641430,
+      "baseline_price": 0.0874,
+      "baseline_time": "09:00",
+      "momentum_pct": 24.49,
+      "momentum_time": "09:56",
+      "peak_price": 0.1338,
+      "peak_time": "09:58",
+      "reversal_price": 0.1301,
+      "reversal_time": "09:59",
+      "reversal_pct": 2.77,
+      "status": "REVERSED",
+      "date": "2026-06-05"
+    },
+    {
+      "symbol": "SNBR",
+      "avg_volume": 305118924,
+      "baseline_price": 0.329,
+      "baseline_time": "09:01",
+      "momentum_pct": 20.67,
+      "momentum_time": "09:33",
+      "peak_price": 0.4711,
+      "peak_time": "09:36",
+      "reversal_price": 0.4322,
+      "reversal_time": "09:37",
+      "reversal_pct": 8.26,
+      "status": "REVERSED",
+      "date": "2026-06-05"
+    }
+  ]
 }
