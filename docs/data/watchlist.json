@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-15 16:35 ET",
+  "generated_at": "2026-06-16 16:17 ET",
   "method": "top_movers_screener",
   "filters": {
     "price_min": 1.0,
@@ -14,18 +14,18 @@
   "details": [
     {
       "symbol": "AAL",
-      "price": 15.46,
+      "price": 15.7,
       "change_pct": 0,
-      "volume": 178841574,
+      "volume": 133322156,
       "sources": [
         "most_active"
       ]
     },
     {
       "symbol": "ACHR",
-      "price": 5.04,
+      "price": 5.3,
       "change_pct": 0,
-      "volume": 57202507,
+      "volume": 59251090,
       "sources": [
         "most_active"
       ]
