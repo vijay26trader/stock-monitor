@@ -1,31 +1,21 @@
 {
-  "generated_at": "2026-06-24 11:54 ET",
+  "generated_at": "2026-06-25 06:47 ET",
   "method": "top_movers_screener",
   "filters": {
     "price_min": 1.0,
     "price_max": 20.0,
     "top_n": 50
   },
-  "total": 2,
+  "total": 1,
   "symbols": [
-    "AAL",
-    "ABSI"
+    "AAL"
   ],
   "details": [
     {
       "symbol": "AAL",
-      "price": 17.21,
+      "price": 17.43,
       "change_pct": 0,
-      "volume": 70100976,
-      "sources": [
-        "most_active"
-      ]
-    },
-    {
-      "symbol": "ABSI",
-      "price": 7.38,
-      "change_pct": 0,
-      "volume": 21734049,
+      "volume": 207237507,
       "sources": [
         "most_active"
       ]
