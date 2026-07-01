@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-01 07:28 ET",
+  "generated_at": "2026-07-01 09:53 ET",
   "method": "top_movers_screener",
   "filters": {
     "price_min": 1.0,
@@ -8,14 +8,14 @@
   },
   "total": 1,
   "symbols": [
-    "AAL"
+    "BITO"
   ],
   "details": [
     {
-      "symbol": "AAL",
-      "price": 18.07,
+      "symbol": "BITO",
+      "price": 8.12,
       "change_pct": 0,
-      "volume": 157670279,
+      "volume": 16482130,
       "sources": [
         "most_active"
       ]
