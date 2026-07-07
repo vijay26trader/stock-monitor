@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-07 09:27 ET",
+  "generated_at": "2026-07-07 12:05 ET",
   "method": "top_movers_screener",
   "filters": {
     "price_min": 1.0,
@@ -14,18 +14,18 @@
   "details": [
     {
       "symbol": "AAL",
-      "price": 17.76,
+      "price": 17.39,
       "change_pct": 0,
-      "volume": 142896545,
+      "volume": 40901889,
       "sources": [
         "most_active"
       ]
     },
     {
       "symbol": "AMC",
-      "price": 1.89,
+      "price": 1.75,
       "change_pct": 0,
-      "volume": 68887663,
+      "volume": 24319385,
       "sources": [
         "most_active"
       ]
