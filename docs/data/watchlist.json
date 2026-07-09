@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-09 07:13 ET",
+  "generated_at": "2026-07-09 09:58 ET",
   "method": "top_movers_screener",
   "filters": {
     "price_min": 1.0,
@@ -8,24 +8,24 @@
   },
   "total": 2,
   "symbols": [
-    "AAL",
-    "AMC"
+    "BITO",
+    "BATL"
   ],
   "details": [
     {
-      "symbol": "AAL",
-      "price": 16.5,
+      "symbol": "BITO",
+      "price": 8.64,
       "change_pct": 0,
-      "volume": 176656739,
+      "volume": 23679404,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "AMC",
-      "price": 1.72,
+      "symbol": "BATL",
+      "price": 1.38,
       "change_pct": 0,
-      "volume": 78774149,
+      "volume": 7681597,
       "sources": [
         "most_active"
       ]
