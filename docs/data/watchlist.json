@@ -1,21 +1,31 @@
 {
-  "generated_at": "2026-07-10 11:42 ET",
+  "generated_at": "2026-07-13 07:17 ET",
   "method": "top_movers_screener",
   "filters": {
     "price_min": 1.0,
     "price_max": 20.0,
     "top_n": 50
   },
-  "total": 1,
+  "total": 2,
   "symbols": [
-    "AAL"
+    "AAL",
+    "BBD"
   ],
   "details": [
     {
       "symbol": "AAL",
-      "price": 16.86,
+      "price": 16.96,
       "change_pct": 0,
-      "volume": 29429709,
+      "volume": 82064858,
+      "sources": [
+        "most_active"
+      ]
+    },
+    {
+      "symbol": "BBD",
+      "price": 3.47,
+      "change_pct": 0,
+      "volume": 41321422,
       "sources": [
         "most_active"
       ]
