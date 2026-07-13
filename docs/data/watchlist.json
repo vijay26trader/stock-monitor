@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-13 07:17 ET",
+  "generated_at": "2026-07-13 09:32 ET",
   "method": "top_movers_screener",
   "filters": {
     "price_min": 1.0,
@@ -8,24 +8,24 @@
   },
   "total": 2,
   "symbols": [
-    "AAL",
-    "BBD"
+    "AGEN",
+    "BATL"
   ],
   "details": [
     {
-      "symbol": "AAL",
-      "price": 16.96,
+      "symbol": "AGEN",
+      "price": 5.07,
       "change_pct": 0,
-      "volume": 82064858,
+      "volume": 50921494,
       "sources": [
         "most_active"
       ]
     },
     {
-      "symbol": "BBD",
-      "price": 3.47,
+      "symbol": "BATL",
+      "price": 1.64,
       "change_pct": 0,
-      "volume": 41321422,
+      "volume": 6821095,
       "sources": [
         "most_active"
       ]
