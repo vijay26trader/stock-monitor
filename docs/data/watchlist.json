@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-13 12:08 ET",
+  "generated_at": "2026-07-14 06:02 ET",
   "method": "top_movers_screener",
   "filters": {
     "price_min": 1.0,
@@ -13,9 +13,9 @@
   "details": [
     {
       "symbol": "AAL",
-      "price": 16.39,
+      "price": 16.31,
       "change_pct": 0,
-      "volume": 45486248,
+      "volume": 152770620,
       "sources": [
         "most_active"
       ]
